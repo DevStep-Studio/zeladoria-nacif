@@ -1,6 +1,6 @@
 import React, {useEffect, useMemo, useState} from 'react';
 import {Link} from 'react-router-dom';
-import {useQuery, useMutation, useQueryClient} from '@tanstack/react-query';
+import {useQuery, useQueryClient} from '@tanstack/react-query';
 import {Badge} from "@/components/ui/badge";
 import {Button} from "@/components/ui/button";
 import {Card, CardContent, CardHeader, CardTitle} from "@/components/ui/card";
@@ -15,32 +15,26 @@ import {
   CloudRain,
   Droplets,
   Loader2,
-  LocateFixed,
   MapPin,
-  Navigation,
   Phone,
   RefreshCw,
-  Search,
   Shield,
   ShieldAlert,
   ShieldCheck,
   Sun,
-  Thermometer,
   Wind,
   Radio,
   Send,
   Bell,
   CheckCircle2,
   Compass,
-  Gauge,
-  Eye,
   Info
 } from 'lucide-react';
 import {toast} from 'sonner';
-import {base44} from '@/api/base44Client';
+import {appApi} from '@/services/app-api';
 import {useAuth} from '@/lib/AuthContext';
-import {createHistoryEntry, createTimelineEvent, estimateDeadline, generateProtocolNumber} from '@/lib/occurrences';
-import {MUNICIPALITY_CONFIG, getCoordinateValidationMessage, isValidCoordinate, resolveMunicipalCoordinates} from '@/lib/municipality';
+import {createTimelineEvent, generateProtocolNumber} from '@/lib/occurrences';
+import {MUNICIPALITY_CONFIG, isValidCoordinate, resolveMunicipalCoordinates} from '@/lib/municipality';
 import {getLocationLabel, maskCep, normalizeState} from '@/lib/location';
 import {buildWeatherAlerts, fetchWeather, getMaxAlertLevel} from '@/lib/weather';
 import {useUserLocation} from '@/hooks/use-user-location';
@@ -152,7 +146,7 @@ export default function DefesaCivil() {
     queryKey: ['civil-defense-alerts'],
     queryFn: async () => {
       try {
-        return await base44.entities.CivilDefenseAlert.list('-created_date', 100);
+        return await appApi.entities.CivilDefenseAlert.list('-created_date', 100);
       } catch (error) {
         return [];
       }
@@ -163,7 +157,7 @@ export default function DefesaCivil() {
     queryKey: ['civil-defense-shelters'],
     queryFn: async () => {
       try {
-        return await base44.entities.CivilDefenseShelter.list('name', 100);
+        return await appApi.entities.CivilDefenseShelter.list('name', 100);
       } catch (error) {
         return [];
       }
@@ -174,7 +168,7 @@ export default function DefesaCivil() {
     queryKey: ['emergency-contacts'],
     queryFn: async () => {
       try {
-        return await base44.entities.EmergencyContact.list('sort_order', 100);
+        return await appApi.entities.EmergencyContact.list('sort_order', 100);
       } catch (error) {
         return [];
       }
@@ -206,7 +200,7 @@ export default function DefesaCivil() {
         const severe = generatedAlerts.find(a => a.level === 'vermelho' || a.level === 'laranja');
         if (severe && user?.email) {
           try {
-            await base44.entities.Notification.create({
+            await appApi.entities.Notification.create({
               user_email: user.email,
               title: `[DEFESA CIVIL] ${severe.title}`,
               message: severe.message,
@@ -271,7 +265,7 @@ export default function DefesaCivil() {
       const region = broadcastForm.region || location?.city || 'Toda a Cidade';
       
       // 1. Create civil defense alert entity
-      await base44.entities.CivilDefenseAlert.create({
+      await appApi.entities.CivilDefenseAlert.create({
         title: broadcastForm.title,
         message: broadcastForm.message,
         instructions: broadcastForm.instructions,
@@ -286,7 +280,7 @@ export default function DefesaCivil() {
 
       // 2. Dispatch notification to user's notification center
       if (user?.email) {
-        await base44.entities.Notification.create({
+        await appApi.entities.Notification.create({
           user_email: user.email,
           title: `[ALERTA OFICIAL ${broadcastForm.level.toUpperCase()}] ${broadcastForm.title}`,
           message: `${broadcastForm.message} - ${broadcastForm.instructions}`,
@@ -326,7 +320,7 @@ export default function DefesaCivil() {
       const now = new Date();
       const protocolNumber = generateProtocolNumber(now);
 
-      await base44.entities.Occurrence.create({
+      await appApi.entities.Occurrence.create({
         title: 'EMERGÊNCIA DEFESA CIVIL (ALERTA CRÍTICO)',
         description: `Chamado prioritário aberto pelo cidadão na central da Defesa Civil. Endereço: ${getLocationLabel(currentLocation)}`,
         category: 'denuncia',

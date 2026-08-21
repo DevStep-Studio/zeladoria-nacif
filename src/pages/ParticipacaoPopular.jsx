@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
 import {Link} from 'react-router-dom';
-import {base44} from '@/api/base44Client';
+import {appApi} from '@/services/app-api';
 import {useQuery, useQueryClient} from '@tanstack/react-query';
 import {useAuth} from '@/lib/AuthContext';
 import {Button} from"@/components/ui/button";
@@ -29,7 +29,7 @@ export default function ParticipacaoPopular() {
 
  const {data: polls = []} = useQuery({
    queryKey: ['public-polls'],
-   queryFn: () => base44.entities.PublicPoll?.list('-created_date', 50) || Promise.resolve([]),
+   queryFn: () => appApi.entities.PublicPoll?.list('-created_date', 50) || Promise.resolve([]),
  });
 
  const MOCK_POLLS = [

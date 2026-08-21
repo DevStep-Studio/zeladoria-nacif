@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {base44} from '@/api/base44Client';
+import {appApi} from '@/services/app-api';
 import {useQuery, useMutation, useQueryClient} from '@tanstack/react-query';
 import {useAuth} from '@/lib/AuthContext';
 import {Bell, X, CheckCheck, AlertCircle, Info, AlertTriangle, ExternalLink, ShieldAlert, Shield} from 'lucide-react';
@@ -25,7 +25,7 @@ export default function NotificationCenter() {
 
  const {data: notifications = []} = useQuery({
  queryKey: ['notifications', user?.email],
- queryFn: () => base44.entities.Notification.filter({user_email: user?.email}, '-created_date', 30),
+ queryFn: () => appApi.entities.Notification.filter({user_email: user?.email}, '-created_date', 30),
  enabled: !!user?.email,
  refetchInterval: 30000,
 });
@@ -33,13 +33,13 @@ export default function NotificationCenter() {
  const unread = notifications.filter(n => !n.read).length;
 
  const markRead = useMutation({
- mutationFn: (id) => base44.entities.Notification.update(id, {read: true}),
+ mutationFn: (id) => appApi.entities.Notification.update(id, {read: true}),
  onSuccess: () => qc.invalidateQueries({queryKey: ['notifications']}),
 });
 
  const markAllRead = async () => {
  const unreadOnes = notifications.filter(n => !n.read);
- await Promise.all(unreadOnes.map(n => base44.entities.Notification.update(n.id, {read: true})));
+ await Promise.all(unreadOnes.map(n => appApi.entities.Notification.update(n.id, {read: true})));
  qc.invalidateQueries({queryKey: ['notifications']});
 };
 

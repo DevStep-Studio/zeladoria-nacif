@@ -2,8 +2,8 @@ const baseUrl = import.meta.env.BASE_URL || '/';
 const publicUrl = import.meta.env.VITE_PUBLIC_APP_URL || import.meta.env.VITE_BASE44_APP_BASE_URL || '';
 
 export const BRAND = {
- name: 'Zeladoria',
- title: 'Zeladoria — Smart City Platform',
+ name: 'Zeladoria Cidades',
+ title: 'Zeladoria Cidades',
  description: 'Sistema municipal de zeladoria, alertas, ocorrências e serviços públicos.',
  logoSymbol: `${baseUrl}images/brand/logo.png`,
  logoSymbolWhite: `${baseUrl}images/brand/logo-white.png`,

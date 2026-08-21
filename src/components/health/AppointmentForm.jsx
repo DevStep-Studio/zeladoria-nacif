@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react';
-import {base44} from '@/api/base44Client';
+import {appApi} from '@/services/app-api';
 import {useAuth} from '@/lib/AuthContext';
 import {useQuery} from '@tanstack/react-query';
 import {Card, CardContent, CardHeader, CardTitle} from"@/components/ui/card";
@@ -41,7 +41,7 @@ export default function AppointmentForm({preSelectedDoctor, onDone}) {
 
  const {data: doctors = []} = useQuery({
  queryKey: ['health-doctors'],
- queryFn: () => base44.entities.HealthDoctor.list('-created_date', 100),
+ queryFn: () => appApi.entities.HealthDoctor.list('-created_date', 100),
 });
 
  const filteredDoctors = filterSpec === 'all' ? doctors : doctors.filter(d => d.specialty === filterSpec);
@@ -50,7 +50,7 @@ export default function AppointmentForm({preSelectedDoctor, onDone}) {
  if (!form.appointment_date || !form.appointment_time) {toast.error('Selecione data e horário'); return;}
  setLoading(true);
  const proto =`SAU-${Date.now().toString(36).toUpperCase()}`;
- await base44.entities.HealthAppointment.create({
+ await appApi.entities.HealthAppointment.create({
  ...form,
  doctor_id: selectedDoctor.id,
  doctor_name: selectedDoctor.name,

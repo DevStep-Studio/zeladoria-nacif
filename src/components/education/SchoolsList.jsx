@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {base44} from '@/api/base44Client';
+import {appApi} from '@/services/app-api';
 import {useQuery} from '@tanstack/react-query';
 
 
@@ -20,7 +20,7 @@ export default function SchoolsList({onEnroll}) {
 
  const {data: schools = [], isLoading} = useQuery({
  queryKey: ['schools'],
- queryFn: () => base44.entities.School.list('-created_date', 100),
+ queryFn: () => appApi.entities.School.list('-created_date', 100),
 });
 
  const neighborhoods = [...new Set(schools.map(s => s.neighborhood).filter(Boolean))];

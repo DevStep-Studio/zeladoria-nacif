@@ -1,6 +1,6 @@
 import React, {useState, useRef, useEffect} from 'react';
 import {createPortal} from 'react-dom';
-import {base44} from '@/api/base44Client';
+import {appApi} from '@/services/app-api';
 import {X, Send, Loader2, Bot, User, Sparkles} from 'lucide-react';
 import {Button} from '@/components/ui/button';
 import ReactMarkdown from 'react-markdown';
@@ -31,7 +31,7 @@ export default function AIAssistant() {
 
  const history = messages.map(m =>`${m.role === 'user' ? 'Cidadão' : 'Zé'}: ${m.content}`).join('\n');
 
- const reply = await base44.integrations.Core.InvokeLLM({
+ const reply = await appApi.integrations.Core.InvokeLLM({
  prompt:`Você é o"Zé", assistente virtual de uma prefeitura brasileira no sistema Zeladoria Smart City.
 Seja prestativo, conciso e use linguagem simples e amigável.
 Responda em português. Não use emojis.

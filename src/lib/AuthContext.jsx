@@ -1,12 +1,16 @@
 import React, {createContext, useState, useContext, useEffect} from 'react';
-import {base44} from '@/api/base44Client';
-import {appParams} from '@/lib/app-params';
-import {createAxiosClient} from '@base44/sdk/dist/utils/axios-client';
+import {appApi} from '@/services/app-api';
+import {queryClientInstance} from '@/lib/query-client';
 
 const AuthContext = createContext();
 
 const ROLE_OVERRIDE_KEY = 'zeldoria:user-role-override';
 const LOCAL_USER_KEY = 'zeldoria:custom-user-data';
+
+const hasPersistedSession = () => {
+  if (typeof window === 'undefined') return false;
+  return Boolean(window.localStorage.getItem(LOCAL_USER_KEY) || appApi.auth.hasSession?.());
+};
 
 export const SUPER_ADMIN_USER = {
   id: 'super-admin-01',
@@ -61,7 +65,7 @@ export const AuthProvider = ({children}) => {
     return null;
   });
   const [isAuthenticated, setIsAuthenticated] = useState(() => {
-    return Boolean(window.localStorage.getItem(LOCAL_USER_KEY) || appParams.token);
+    return hasPersistedSession();
   });
   const [isLoadingAuth, setIsLoadingAuth] = useState(true);
   const [isLoadingPublicSettings, setIsLoadingPublicSettings] = useState(true);
@@ -111,7 +115,7 @@ export const AuthProvider = ({children}) => {
         } catch {}
       }
 
-      if (appParams.token) {
+      if (appApi.auth.hasSession?.()) {
         await checkUserAuth();
       } else {
         setIsLoadingAuth(false);
@@ -129,7 +133,7 @@ export const AuthProvider = ({children}) => {
   const checkUserAuth = async () => {
     try {
       setIsLoadingAuth(true);
-      const currentUser = await base44.auth.me();
+      const currentUser = await appApi.auth.me();
       const roleOverride = window.localStorage.getItem(ROLE_OVERRIDE_KEY);
       const savedLocal = window.localStorage.getItem(LOCAL_USER_KEY);
       const localData = savedLocal ? JSON.parse(savedLocal) : {};
@@ -194,22 +198,29 @@ export const AuthProvider = ({children}) => {
     persistUser(null);
     window.localStorage.removeItem(ROLE_OVERRIDE_KEY);
     window.localStorage.removeItem(LOCAL_USER_KEY);
-    
-    if (shouldRedirect) {
-      try {
-        base44.auth.logout(window.location.origin + '/login');
-      } catch {
-        window.location.href = '/login';
+    queryClientInstance.clear();
+
+    const finish = () => {
+      if (shouldRedirect && window.location.pathname !== '/login') {
+        window.location.replace('/login');
       }
-    } else {
-      try {
-        base44.auth.logout();
-      } catch {}
+    };
+
+    try {
+      const result = appApi.auth.logout();
+      if (result?.finally) {
+        result.catch(() => {}).finally(finish);
+        return;
+      }
+    } catch {
+      // Local logout has already completed; redirect still happens below.
     }
+
+    finish();
   };
 
   const navigateToLogin = () => {
-    window.location.href = '/login';
+    window.location.replace('/login');
   };
 
   return (

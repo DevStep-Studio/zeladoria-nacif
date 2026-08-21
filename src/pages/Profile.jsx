@@ -1,6 +1,6 @@
 import React, {useEffect, useRef, useState} from 'react';
 import {useAuth} from '@/lib/AuthContext';
-import {base44} from '@/api/base44Client';
+import {appApi} from '@/services/app-api';
 import {Card, CardContent, CardHeader, CardTitle} from "@/components/ui/card";
 import {Button} from "@/components/ui/button";
 import {Input} from "@/components/ui/input";
@@ -172,7 +172,7 @@ export default function Profile() {
    let profilePhotoUrl = photoRemoved ? '' : form.profile_photo_url;
 
    if (pendingPhotoFile) {
-    const {file_url} = await base44.integrations.Core.UploadFile({file: pendingPhotoFile});
+    const {file_url} = await appApi.integrations.Core.UploadFile({file: pendingPhotoFile});
     profilePhotoUrl = file_url;
    }
 
@@ -210,7 +210,7 @@ export default function Profile() {
    updateUserData(fullPayload);
 
    try {
-     await base44.auth.updateMe(fullPayload);
+     await appApi.auth.updateMe(fullPayload);
      await checkUserAuth();
    } catch {}
 

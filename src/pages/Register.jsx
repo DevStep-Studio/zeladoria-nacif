@@ -1,11 +1,11 @@
 import React, {useState, useRef, useEffect} from "react";
 import {Link, useNavigate} from "react-router-dom";
-import {base44} from "@/api/base44Client";
+import {appApi} from '@/services/app-api';
 import {useAuth} from "@/lib/AuthContext";
 import {Button} from "@/components/ui/button";
 import {Input} from "@/components/ui/input";
 import {Label} from "@/components/ui/label";
-import {ArrowRight, Mail, Lock, Loader2, User, MapPin, Home, AlertCircle, CheckCircle2} from "lucide-react";
+import {ArrowRight, Mail, Lock, Loader2, User, Home, CheckCircle2} from "lucide-react";
 import {InputOTP, InputOTPGroup, InputOTPSlot} from "@/components/ui/input-otp";
 import AuthLayout from "@/components/AuthLayout";
 import GoogleIcon from "@/components/GoogleIcon";
@@ -139,7 +139,7 @@ export default function Register() {
   try {
    const profile = await buildFullProfile();
    try {
-    await base44.auth.register({email, password});
+    await appApi.auth.register({email, password});
     setShowOtp(true);
    } catch (apiErr) {
     // If auth register endpoint fails or offline, activate local account
@@ -157,9 +157,9 @@ export default function Register() {
   setError("");
   setLoading(true);
   try {
-   const result = await base44.auth.verifyOtp({email, otpCode});
+   const result = await appApi.auth.verifyOtp({email, otpCode});
    if (result?.access_token) {
-    base44.auth.setToken(result.access_token);
+    appApi.auth.setToken(result.access_token);
    }
    await buildFullProfile();
    window.location.href = "/";
@@ -175,7 +175,7 @@ export default function Register() {
  const handleResend = async () => {
   setError("");
   try {
-   await base44.auth.resendOtp(email);
+   await appApi.auth.resendOtp(email);
    toast({
     title: "Código enviado",
     description: "Verifique seu e-mail para o novo código.",
@@ -186,7 +186,7 @@ export default function Register() {
  };
 
  const handleGoogle = () => {
-  base44.auth.loginWithProvider("google", "/");
+  appApi.auth.loginWithProvider("google", "/");
  };
 
  if (showOtp) {

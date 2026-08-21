@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react';
-import {base44} from '@/api/base44Client';
+import {appApi} from '@/services/app-api';
 import {useQuery} from '@tanstack/react-query';
 import {Card, CardContent, CardHeader, CardTitle} from"@/components/ui/card";
 import {Badge} from"@/components/ui/badge";
@@ -39,13 +39,13 @@ export default function SmartCityOps() {
 
  const {data: occurrences = []} = useQuery({
  queryKey: ['ops-occurrences'],
- queryFn: () => base44.entities.Occurrence.list('-created_date', 200),
+ queryFn: () => appApi.entities.Occurrence.list('-created_date', 200),
  refetchInterval: 15000,
 });
 
  const {data: teams = []} = useQuery({
  queryKey: ['ops-teams'],
- queryFn: () => base44.entities.Team.list(),
+ queryFn: () => appApi.entities.Team.list(),
  refetchInterval: 15000,
 });
 

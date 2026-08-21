@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react';
-import {base44} from '@/api/base44Client';
+import {appApi} from '@/services/app-api';
 import {useAuth} from '@/lib/AuthContext';
 import {useQuery} from '@tanstack/react-query';
 import {Card, CardContent, CardHeader, CardTitle} from"@/components/ui/card";
@@ -38,14 +38,14 @@ export default function EnrollmentForm({preSelectedSchool, onDone}) {
 
  const {data: schools = []} = useQuery({
  queryKey: ['schools'],
- queryFn: () => base44.entities.School.list('-created_date', 100),
+ queryFn: () => appApi.entities.School.list('-created_date', 100),
 });
 
  const handleUpload = async (e, field, setUploading) => {
  const file = e.target.files?.[0];
  if (!file) return;
  setUploading(true);
- const {file_url} = await base44.integrations.Core.UploadFile({file});
+ const {file_url} = await appApi.integrations.Core.UploadFile({file});
  setForm(f => ({...f, [field]: file_url}));
  setUploading(false);
  toast.success('Arquivo enviado!');
@@ -58,7 +58,7 @@ export default function EnrollmentForm({preSelectedSchool, onDone}) {
 }
  setLoading(true);
  const proto =`EDU-${Date.now().toString(36).toUpperCase()}`;
- await base44.entities.SchoolEnrollment.create({
+ await appApi.entities.SchoolEnrollment.create({
  ...form,
  student_age: Number(form.student_age),
  school_id: selectedSchool?.id || '',

@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {Link, useNavigate} from 'react-router-dom';
-import {base44} from '@/api/base44Client';
+import {appApi} from '@/services/app-api';
 import {useAuth} from '@/lib/AuthContext';
 import {Button} from '@/components/ui/button';
 import {Input} from '@/components/ui/input';
@@ -34,7 +34,7 @@ export default function Login() {
   setLoading(true);
 
   try {
-   await base44.auth.loginViaEmailPassword(email, password);
+   await appApi.auth.loginViaEmailPassword(email, password);
    if (rememberMe) {
     window.localStorage.setItem(REMEMBERED_EMAIL_KEY, email);
    } else {
@@ -221,7 +221,7 @@ export default function Login() {
     </div>
 
     <footer className="flex shrink-0 items-center justify-between gap-4 text-[11px] text-slate-300">
-     <span>© 2026 Zeldoria</span>
+     <span>© 2026 Zeladoria Cidades</span>
      <div className="flex items-center gap-5">
       <span>Privacidade</span>
       <span>Termos</span>

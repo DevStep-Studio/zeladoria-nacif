@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {base44} from '@/api/base44Client';
+import {appApi} from '@/services/app-api';
 import {useQuery, useMutation, useQueryClient} from '@tanstack/react-query';
 import {Card, CardContent} from"@/components/ui/card";
 import {Button} from"@/components/ui/button";
@@ -16,11 +16,11 @@ export default function AdminDepartments() {
 
  const {data: departments = [], isLoading} = useQuery({
  queryKey: ['departments'],
- queryFn: () => base44.entities.Department.list('-created_date'),
+ queryFn: () => appApi.entities.Department.list('-created_date'),
 });
 
  const createMutation = useMutation({
- mutationFn: (data) => base44.entities.Department.create(data),
+ mutationFn: (data) => appApi.entities.Department.create(data),
  onSuccess: () => {
  queryClient.invalidateQueries({queryKey: ['departments']});
  setShowForm(false);
@@ -30,7 +30,7 @@ export default function AdminDepartments() {
 });
 
  const deleteMutation = useMutation({
- mutationFn: (id) => base44.entities.Department.delete(id),
+ mutationFn: (id) => appApi.entities.Department.delete(id),
  onSuccess: () => {
  queryClient.invalidateQueries({queryKey: ['departments']});
  toast.success('Secretaria removida');

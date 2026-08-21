@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
 import {Link} from 'react-router-dom';
-import {base44} from '@/api/base44Client';
+import {appApi} from '@/services/app-api';
 import {useQuery, useMutation, useQueryClient} from '@tanstack/react-query';
 import {Card, CardContent} from"@/components/ui/card";
 import {Button} from"@/components/ui/button";
@@ -27,13 +27,13 @@ export default function TeamApp() {
 
  const {data: user} = useQuery({
    queryKey: ['me'],
-   queryFn: () => base44.auth.me(),
+   queryFn: () => appApi.auth.me(),
  });
 
  const {data: occurrences = [], isLoading} = useQuery({
    queryKey: ['team-occurrences'],
    queryFn: async () => {
-     const items = await base44.entities.Occurrence.list('-created_date', 100);
+     const items = await appApi.entities.Occurrence.list('-created_date', 100);
      return items.filter(occ => ['encaminhada', 'programada', 'em_execucao', 'equipe_enviada'].includes(occ.status));
    },
    refetchInterval: 60000,
@@ -42,8 +42,8 @@ export default function TeamApp() {
  const updateMutation = useMutation({
    mutationFn: /** @param {any} payload */ async (payload) => {
      const {occurrence, data, description} = payload;
-     const updated = await base44.entities.Occurrence.update(occurrence.id, data);
-     await base44.entities.AuditLog.create({
+     const updated = await appApi.entities.Occurrence.update(occurrence.id, data);
+     await appApi.entities.AuditLog.create({
        user_email: user?.email || 'equipe',
        action: 'team_occurrence_updated',
        entity_type: 'Occurrence',
@@ -53,7 +53,7 @@ export default function TeamApp() {
        description,
      });
      if (occurrence.created_by && data.status) {
-       await base44.entities.Notification.create({
+       await appApi.entities.Notification.create({
          user_email: occurrence.created_by,
          title: 'Equipe atualizou sua ocorrência',
          message: `Seu protocolo ${getProtocolNumber(occurrence)} agora está como ${getStatusLabel(data.status)}.`,

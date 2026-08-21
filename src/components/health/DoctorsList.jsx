@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {base44} from '@/api/base44Client';
+import {appApi} from '@/services/app-api';
 import {useQuery} from '@tanstack/react-query';
 import {Badge} from"@/components/ui/badge";
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from"@/components/ui/select";
@@ -24,7 +24,7 @@ export default function DoctorsList({onBook}) {
 
  const {data: doctors = [], isLoading} = useQuery({
  queryKey: ['health-doctors'],
- queryFn: () => base44.entities.HealthDoctor.list('-created_date', 100),
+ queryFn: () => appApi.entities.HealthDoctor.list('-created_date', 100),
 });
 
  const neighborhoods = [...new Set(doctors.map(d => d.neighborhood).filter(Boolean))];

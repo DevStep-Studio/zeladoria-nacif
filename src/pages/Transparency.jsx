@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
 import {Link} from 'react-router-dom';
-import {base44} from '@/api/base44Client';
+import {appApi} from '@/services/app-api';
 import {useQuery} from '@tanstack/react-query';
 import {Card, CardContent, CardHeader, CardTitle} from"@/components/ui/card";
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from"@/components/ui/select";
@@ -9,6 +9,8 @@ import {CATEGORIES, PUBLIC_STATUS_OPTIONS, getStatusGroup, isResolvedStatus} fro
 import StatusBadge from '@/components/shared/StatusBadge';
 import CategoryBadge from '@/components/shared/CategoryBadge';
 import OccurrenceMap from '@/components/shared/OccurrenceMap';
+import DataPagination from '@/components/shared/DataPagination';
+import {usePagination} from '@/hooks/use-pagination';
 import {format} from 'date-fns';
 import {ptBR} from 'date-fns/locale';
 import {BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer} from 'recharts';
@@ -18,7 +20,7 @@ export default function Transparency() {
 
  const {data: occurrences = [], isLoading} = useQuery({
    queryKey: ['transparency-occurrences'],
-   queryFn: () => base44.entities.Occurrence.list('-created_date', 500),
+   queryFn: () => appApi.entities.Occurrence.list('-created_date', 500),
  });
 
  const total = occurrences.length;
@@ -39,6 +41,10 @@ export default function Transparency() {
  })).filter(d => d.total > 0).sort((a, b) => b.total - a.total).slice(0, 8);
 
  const filtered = occurrences.filter(o => statusFilter === 'all' || o.status === statusFilter);
+ const pagination = usePagination(filtered, {
+   pageSize: 10,
+   resetDeps: [statusFilter],
+ });
 
  return (
     <div className="min-h-screen bg-slate-50/50">
@@ -161,7 +167,7 @@ export default function Transparency() {
           </CardHeader>
           <CardContent className="p-0">
             <div className="divide-y divide-slate-100">
-              {filtered.slice(0, 20).map(occ => (
+              {pagination.pageItems.map(occ => (
                 <div key={occ.id} className="flex items-start gap-4 p-5 hover:bg-slate-50 transition-colors">
                   <div className="flex-1 min-w-0">
                     <p className="text-[14px] font-bold text-slate-800 leading-tight mb-2 truncate">
@@ -188,6 +194,15 @@ export default function Transparency() {
                 </div>
               )}
             </div>
+            <DataPagination
+              page={pagination.page}
+              pageSize={pagination.pageSize}
+              totalItems={pagination.totalItems}
+              totalPages={pagination.totalPages}
+              onPageChange={pagination.setPage}
+              onPageSizeChange={pagination.setPageSize}
+              itemLabel="ocorrências"
+            />
           </CardContent>
         </Card>
       </div>

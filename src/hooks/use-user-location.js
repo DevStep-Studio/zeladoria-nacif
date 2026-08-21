@@ -1,5 +1,5 @@
 import {useCallback, useEffect, useRef, useState} from 'react';
-import {base44} from '@/api/base44Client';
+import {appApi} from '@/services/app-api';
 import {useAuth} from '@/lib/AuthContext';
 import {
  GEOLOCATION_TIMEOUT_MS,
@@ -50,7 +50,7 @@ export function useUserLocation({autoRequest = false, persistToProfile = true} =
 
   if (persistToProfile && user?.email) {
    try {
-    await base44.auth.updateMe(locationToUserPayload(nextLocation));
+    await appApi.auth.updateMe(locationToUserPayload(nextLocation));
    } catch (persistError) {
     console.error('Failed to persist user location', persistError);
    }

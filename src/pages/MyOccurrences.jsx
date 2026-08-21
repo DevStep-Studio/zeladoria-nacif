@@ -1,11 +1,13 @@
 import React, {useMemo, useState} from 'react';
-import {base44} from '@/api/base44Client';
+import {appApi} from '@/services/app-api';
 import {useQuery} from '@tanstack/react-query';
 import {useAuth} from '@/lib/AuthContext';
 import {ClipboardList, FileX2, RefreshCw} from 'lucide-react';
 import OccurrenceCard from '@/components/citizen/OccurrenceCard';
+import DataPagination from '@/components/shared/DataPagination';
 import {Button} from '@/components/ui/button';
 import {STATUS_GROUPS, getStatusGroup} from '@/lib/constants';
+import {usePagination} from '@/hooks/use-pagination';
 
 const GROUP_ORDER = ['abertas', 'andamento', 'concluidas', 'canceladas'];
 
@@ -15,7 +17,7 @@ export default function MyOccurrences() {
 
  const {data: occurrences = [], isLoading, isError, refetch} = useQuery({
  queryKey: ['my-occurrences', user?.email],
- queryFn: () => base44.entities.Occurrence.filter({created_by: user?.email}, '-created_date', 200),
+ queryFn: () => appApi.entities.Occurrence.filter({created_by: user?.email}, '-created_date', 200),
  enabled: !!user?.email,
 });
 
@@ -29,6 +31,10 @@ export default function MyOccurrences() {
 }, [occurrences]);
 
  const activeOccurrences = grouped[activeGroup] || [];
+ const pagination = usePagination(activeOccurrences, {
+ pageSize: 5,
+ resetDeps: [activeGroup],
+});
 
  return (
  <div className="min-h-screen bg-slate-50/50">
@@ -114,9 +120,19 @@ export default function MyOccurrences() {
  />
  ) : (
  <div className="space-y-3">
- {activeOccurrences.map(occ => (
+ {pagination.pageItems.map(occ => (
  <OccurrenceCard key={occ.id} occurrence={occ} />
  ))}
+ <DataPagination
+ page={pagination.page}
+ pageSize={pagination.pageSize}
+ totalItems={pagination.totalItems}
+ totalPages={pagination.totalPages}
+ onPageChange={pagination.setPage}
+ onPageSizeChange={pagination.setPageSize}
+ pageSizeOptions={[5, 10, 20]}
+ itemLabel="ocorrências"
+ />
  </div>
  )}
  </div>

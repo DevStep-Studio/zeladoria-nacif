@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {base44} from '@/api/base44Client';
+import {appApi} from '@/services/app-api';
 import {useQuery, useMutation, useQueryClient} from '@tanstack/react-query';
 import {useAuth} from '@/lib/AuthContext';
 import {Button} from"@/components/ui/button";
@@ -13,6 +13,8 @@ import CategoryBadge from '@/components/shared/CategoryBadge';
 import SmartPriorityBadge from '@/components/shared/SmartPriorityBadge';
 import SLABadge from '@/components/shared/SLABadge';
 import OccurrenceDetailModal from '@/components/admin/OccurrenceDetailModal';
+import DataPagination from '@/components/shared/DataPagination';
+import {usePagination} from '@/hooks/use-pagination';
 import {format} from 'date-fns';
 import {ptBR} from 'date-fns/locale';
 
@@ -29,17 +31,17 @@ export default function AdminOccurrences() {
 
  const {data: occurrences = [], isLoading} = useQuery({
  queryKey: ['admin-occurrences'],
- queryFn: () => base44.entities.Occurrence.list('-created_date', 200),
+ queryFn: () => appApi.entities.Occurrence.list('-created_date', 200),
 });
 
  const {data: teams = []} = useQuery({
  queryKey: ['teams'],
- queryFn: () => base44.entities.Team.list(),
+ queryFn: () => appApi.entities.Team.list(),
 });
 
  const {data: departments = []} = useQuery({
  queryKey: ['departments'],
- queryFn: () => base44.entities.Department.list(),
+ queryFn: () => appApi.entities.Department.list(),
 });
 
  const updateMutation = useMutation({
@@ -82,9 +84,9 @@ export default function AdminOccurrences() {
  if (isResolvedStatus(data.status)) finalData.resolved_date = finalData.resolved_date || now;
  if (!isClosedStatus(data.status) && data.status !== occurrence.status) finalData.resolution_confirmed = false;
 
- const updated = await base44.entities.Occurrence.update(occurrence.id, finalData);
+ const updated = await appApi.entities.Occurrence.update(occurrence.id, finalData);
 
- await base44.entities.AuditLog.create({
+ await appApi.entities.AuditLog.create({
  user_email: user?.email || 'admin',
  action: statusChanged ? 'occurrence_status_changed' : 'occurrence_updated',
  entity_type: 'Occurrence',
@@ -95,7 +97,7 @@ export default function AdminOccurrences() {
 });
 
  if (statusChanged && occurrence.created_by) {
- await base44.entities.Notification.create({
+ await appApi.entities.Notification.create({
  user_email: occurrence.created_by,
  title: 'Status da ocorrência atualizado',
  message: `Seu protocolo ${getProtocolNumber(occurrence)} agora está como ${getStatusLabel(data.status)}.`,
@@ -127,6 +129,11 @@ export default function AdminOccurrences() {
  (o.neighborhood || '').toLowerCase().includes(s);
 }
  return true;
+});
+
+ const pagination = usePagination(filtered, {
+ pageSize: 10,
+ resetDeps: [statusFilter, categoryFilter, priorityFilter, slaFilter, search],
 });
 
  const slaVencidos = occurrences.filter(o => calcSlaStatus(o).status === 'vencido' && !isResolvedStatus(o.status)).length;
@@ -201,6 +208,7 @@ export default function AdminOccurrences() {
  <div className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin" />
  </div>
  ) : (
+ <div className="overflow-hidden rounded-xl border border-slate-100 bg-white">
  <div className="overflow-x-auto">
  <table className="w-full text-sm">
  <thead>
@@ -216,7 +224,7 @@ export default function AdminOccurrences() {
  </tr>
  </thead>
  <tbody>
- {filtered.map(occ => (
+ {pagination.pageItems.map(occ => (
  <tr key={occ.id} className="border-b hover:bg-muted/50 transition-colors">
  <td className="p-3 whitespace-nowrap text-xs">
  {format(new Date(occ.created_date), 'dd/MM/yy', {locale: ptBR})}
@@ -238,8 +246,25 @@ export default function AdminOccurrences() {
  </td>
  </tr>
  ))}
+ {filtered.length === 0 && (
+ <tr>
+ <td colSpan={8} className="p-8 text-center text-sm font-medium text-muted-foreground">
+ Nenhuma ocorrência encontrada para os filtros selecionados.
+ </td>
+ </tr>
+ )}
  </tbody>
  </table>
+ </div>
+ <DataPagination
+ page={pagination.page}
+ pageSize={pagination.pageSize}
+ totalItems={pagination.totalItems}
+ totalPages={pagination.totalPages}
+ onPageChange={pagination.setPage}
+ onPageSizeChange={pagination.setPageSize}
+ itemLabel="ocorrências"
+ />
  </div>
  )}
 

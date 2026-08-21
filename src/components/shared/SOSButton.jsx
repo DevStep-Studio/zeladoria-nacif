@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
 import {createPortal} from 'react-dom';
 import {AlertTriangle, MapPin, Shield, Phone, Loader2, X, CheckCircle2} from 'lucide-react';
-import {base44} from '@/api/base44Client';
+import {appApi} from '@/services/app-api';
 import {toast} from 'sonner';
 import {createHistoryEntry, createTimelineEvent, estimateDeadline, generateProtocolNumber} from '@/lib/occurrences';
 import {MUNICIPALITY_CONFIG, getCoordinateValidationMessage, isValidCoordinate, resolveMunicipalCoordinates} from '@/lib/municipality';
@@ -37,7 +37,7 @@ export default function SOSButton() {
  const [latitude, longitude] = hasDeviceLocation
  ? [loc.lat, loc.lng]
  : resolveMunicipalCoordinates(null, null);
- await base44.entities.Occurrence.create({
+ await appApi.entities.Occurrence.create({
  title:`ALERTA SOS - ${SOS_OPTIONS.find(o => o.id === type)?.label}`,
  description:`Alerta SOS enviado pelo cidadão. Tipo: ${type}. Localização: ${hasDeviceLocation ?`${loc.lat.toFixed(5)},${loc.lng.toFixed(5)}`: `não disponível, fallback municipal em ${MUNICIPALITY_CONFIG.name}`}`,
  category: 'denuncia',

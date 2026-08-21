@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {base44} from '@/api/base44Client';
+import {appApi} from '@/services/app-api';
 import {useQuery, useMutation, useQueryClient} from '@tanstack/react-query';
 import {Card, CardContent} from"@/components/ui/card";
 import {Button} from"@/components/ui/button";
@@ -24,11 +24,11 @@ export default function AdminTeams() {
 
  const {data: teams = [], isLoading} = useQuery({
  queryKey: ['teams'],
- queryFn: () => base44.entities.Team.list('-created_date'),
+ queryFn: () => appApi.entities.Team.list('-created_date'),
 });
 
  const createMutation = useMutation({
- mutationFn: (data) => base44.entities.Team.create(data),
+ mutationFn: (data) => appApi.entities.Team.create(data),
  onSuccess: () => {
  queryClient.invalidateQueries({queryKey: ['teams']});
  setShowForm(false);
@@ -38,12 +38,12 @@ export default function AdminTeams() {
 });
 
  const updateMutation = useMutation({
- mutationFn: ({id, data}) => base44.entities.Team.update(id, data),
+ mutationFn: ({id, data}) => appApi.entities.Team.update(id, data),
  onSuccess: () => queryClient.invalidateQueries({queryKey: ['teams']}),
 });
 
  const deleteMutation = useMutation({
- mutationFn: (id) => base44.entities.Team.delete(id),
+ mutationFn: (id) => appApi.entities.Team.delete(id),
  onSuccess: () => {
  queryClient.invalidateQueries({queryKey: ['teams']});
  toast.success('Equipe removida');

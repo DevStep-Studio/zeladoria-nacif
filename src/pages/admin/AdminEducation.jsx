@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {base44} from '@/api/base44Client';
+import {appApi} from '@/services/app-api';
 import {useQuery, useMutation, useQueryClient} from '@tanstack/react-query';
 import {Card, CardContent} from"@/components/ui/card";
 import {Badge} from"@/components/ui/badge";
@@ -55,21 +55,21 @@ export default function AdminEducation() {
  const [schoolModal, setSchoolModal] = useState(false);
  const [editingSchool, setEditingSchool] = useState(null);
 
- const {data: schools = []} = useQuery({queryKey: ['schools'], queryFn: () => base44.entities.School.list('-created_date', 100)});
- const {data: enrollments = []} = useQuery({queryKey: ['enrollments'], queryFn: () => base44.entities.SchoolEnrollment.list('-created_date', 100)});
+ const {data: schools = []} = useQuery({queryKey: ['schools'], queryFn: () => appApi.entities.School.list('-created_date', 100)});
+ const {data: enrollments = []} = useQuery({queryKey: ['enrollments'], queryFn: () => appApi.entities.SchoolEnrollment.list('-created_date', 100)});
 
  const saveSchoolMutation = useMutation({
- mutationFn: (form) => editingSchool ? base44.entities.School.update(editingSchool.id, form) : base44.entities.School.create(form),
+ mutationFn: (form) => editingSchool ? appApi.entities.School.update(editingSchool.id, form) : appApi.entities.School.create(form),
  onSuccess: () => {qc.invalidateQueries({queryKey: ['schools']}); setSchoolModal(false); setEditingSchool(null); toast.success('Escola salva!');}
 });
 
  const deleteSchoolMutation = useMutation({
- mutationFn: (id) => base44.entities.School.delete(id),
+ mutationFn: (id) => appApi.entities.School.delete(id),
  onSuccess: () => {qc.invalidateQueries({queryKey: ['schools']}); toast.success('Escola removida');}
 });
 
  const updateEnrMutation = useMutation({
- mutationFn: ({id, status}) => base44.entities.SchoolEnrollment.update(id, {status}),
+ mutationFn: ({id, status}) => appApi.entities.SchoolEnrollment.update(id, {status}),
  onSuccess: () => {qc.invalidateQueries({queryKey: ['enrollments']}); toast.success('Status atualizado');}
 });
 

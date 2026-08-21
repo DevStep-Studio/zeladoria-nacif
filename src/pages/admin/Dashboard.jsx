@@ -1,6 +1,6 @@
 import React from 'react';
 import {Link} from 'react-router-dom';
-import {base44} from '@/api/base44Client';
+import {appApi} from '@/services/app-api';
 import {useQuery} from '@tanstack/react-query';
 import {Card, CardContent, CardHeader, CardTitle} from"@/components/ui/card";
 import {AlertCircle, CheckCircle2, Clock, Users, Activity, TrendingUp, ArrowRight, Zap} from 'lucide-react';
@@ -11,12 +11,12 @@ import DashboardCharts from '@/components/admin/DashboardCharts';
 export default function Dashboard() {
  const {data: occurrences = [], isLoading} = useQuery({
  queryKey: ['admin-occurrences'],
- queryFn: () => base44.entities.Occurrence.list('-created_date', 500),
+ queryFn: () => appApi.entities.Occurrence.list('-created_date', 500),
 });
 
  const {data: teams = []} = useQuery({
  queryKey: ['teams'],
- queryFn: () => base44.entities.Team.list(),
+ queryFn: () => appApi.entities.Team.list(),
 });
 
  const slaVencidos = occurrences.filter(o => !isResolvedStatus(o.status) && calcSlaStatus(o).status === 'vencido').length;
@@ -51,7 +51,7 @@ export default function Dashboard() {
  <div>
  <div className="flex items-center gap-2 mb-1">
  <Zap className="w-5 h-5 text-primary fill-primary/20" />
- <h2 className="text-3xl font-bold text-slate-800 tracking-tight">Olá, {base44.auth.user?.full_name || base44.auth.user?.email?.split('@')[0] || 'Usuário'}</h2>
+ <h2 className="text-3xl font-bold text-slate-800 tracking-tight">Olá, {appApi.auth.user?.full_name || appApi.auth.user?.email?.split('@')[0] || 'Usuário'}</h2>
  </div>
  <p className="text-muted-foreground text-sm">Painel administrativo para gestão de zeladoria urbana e ocorrências.</p>
  </div>

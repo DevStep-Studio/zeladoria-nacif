@@ -1,6 +1,6 @@
 import React, {useState, useEffect} from 'react';
 import {useNavigate, Link} from 'react-router-dom';
-import {base44} from '@/api/base44Client';
+import {appApi} from '@/services/app-api';
 import {useAuth} from '@/lib/AuthContext';
 import {Button} from "@/components/ui/button";
 import {Input} from "@/components/ui/input";
@@ -97,7 +97,7 @@ export default function NewOccurrence() {
 
     setUploadingPhoto(true);
     try {
-      const {file_url} = await base44.integrations.Core.UploadFile({file});
+      const {file_url} = await appApi.integrations.Core.UploadFile({file});
       setForm(prev => ({...prev, photos: [...prev.photos, file_url]}));
     } catch (err) {
       toast.error('Erro ao enviar foto. Tente novamente.');
@@ -218,8 +218,8 @@ export default function NewOccurrence() {
         ],
       };
 
-      const created = await base44.entities.Occurrence.create(payload);
-      await base44.entities.AuditLog.create({
+      const created = await appApi.entities.Occurrence.create(payload);
+      await appApi.entities.AuditLog.create({
         user_email: user?.email || 'cidadao',
         action: 'occurrence_created',
         entity_type: 'Occurrence',

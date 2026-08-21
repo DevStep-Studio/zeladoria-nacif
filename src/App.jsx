@@ -4,6 +4,7 @@ import {queryClientInstance} from '@/lib/query-client'
 import {BrowserRouter as Router, Route, Routes, Navigate} from 'react-router-dom';
 import PageNotFound from './lib/PageNotFound';
 import {AuthProvider, useAuth} from '@/lib/AuthContext';
+import ErrorBoundary from '@/components/ErrorBoundary';
 import UserNotRegisteredError from '@/components/UserNotRegisteredError';
 import ProtectedRoute from '@/components/ProtectedRoute';
 import RoleProtectedPage from '@/components/RoleProtectedPage';
@@ -37,6 +38,8 @@ import HealthModule from '@/pages/HealthModule';
 import EducationModule from '@/pages/EducationModule';
 import ParticipacaoPopular from '@/pages/ParticipacaoPopular';
 import DefesaCivil from '@/pages/DefesaCivil';
+import UnauthorizedPage from '@/pages/errors/UnauthorizedPage';
+import ServerErrorPage from '@/pages/errors/ServerErrorPage';
 
 const FIELD_TEAM_ROLES = ['admin', 'gestor', 'fiscal', 'equipe_campo', 'equipe'];
 
@@ -73,8 +76,10 @@ const AuthenticatedApp = () => {
  <Route path="/register" element={<Register />} />
  <Route path="/forgot-password" element={<ForgotPassword />} />
  <Route path="/reset-password" element={<ResetPassword />} />
+ <Route path="/403" element={<UnauthorizedPage />} />
+ <Route path="/500" element={<ServerErrorPage onRetry={() => window.location.reload()} />} />
 
- <Route element={<ProtectedRoute unauthenticatedElement={<Navigate to="/login"replace />} />}>
+ <Route element={<ProtectedRoute unauthenticatedElement={<Navigate to="/login" replace />} />}>
  {/* Citizen routes */}
  <Route element={<CitizenLayout />}>
  <Route path="/" element={<Home />} />
@@ -125,7 +130,9 @@ function App() {
  <AuthProvider>
  <QueryClientProvider client={queryClientInstance}>
  <Router>
+ <ErrorBoundary>
  <AuthenticatedApp />
+ </ErrorBoundary>
  </Router>
  <Toaster />
  </QueryClientProvider>

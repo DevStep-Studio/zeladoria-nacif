@@ -1,5 +1,5 @@
 import React from 'react';
-import {base44} from '@/api/base44Client';
+import {appApi} from '@/services/app-api';
 import {useQuery, useMutation, useQueryClient} from '@tanstack/react-query';
 import {useAuth} from '@/lib/AuthContext';
 import {Card, CardContent} from"@/components/ui/card";
@@ -29,12 +29,12 @@ export default function MyAppointments() {
 
  const {data: appointments = [], isLoading} = useQuery({
  queryKey: ['my-appointments', user?.email],
- queryFn: () => base44.entities.HealthAppointment.filter({patient_email: user?.email}, '-created_date', 50),
+ queryFn: () => appApi.entities.HealthAppointment.filter({patient_email: user?.email}, '-created_date', 50),
  enabled: !!user?.email,
 });
 
  const cancelMutation = useMutation({
- mutationFn: (id) => base44.entities.HealthAppointment.update(id, {status: 'cancelado'}),
+ mutationFn: (id) => appApi.entities.HealthAppointment.update(id, {status: 'cancelado'}),
  onSuccess: () => {qc.invalidateQueries({queryKey: ['my-appointments']}); toast.success('Consulta cancelada');},
 });
 

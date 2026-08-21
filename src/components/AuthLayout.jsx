@@ -33,7 +33,7 @@ export default function AuthLayout({title, subtitle, footer = null, children}) {
     </div>
 
     <footer className="flex shrink-0 items-center justify-between gap-4 text-[11px] text-slate-300">
-     <span>© 2026 Zeldoria</span>
+     <span>© 2026 Zeladoria Cidades</span>
      <div className="flex items-center gap-5">
       <span>Privacidade</span>
       <span>Termos</span>

@@ -1,10 +1,10 @@
 import React, {useState, useEffect, useMemo} from 'react';
 import {Link} from 'react-router-dom';
 import {motion} from 'framer-motion';
-import {base44} from '@/api/base44Client';
+import {appApi} from '@/services/app-api';
 import {useAuth} from '@/lib/AuthContext';
 import {useQuery} from '@tanstack/react-query';
-import {ArrowRight, PlusCircle, Globe, Heart, GraduationCap, Vote, Shield, Search, SlidersHorizontal, X, MapPin, Home as HomeIcon, LocateFixed, Edit2} from 'lucide-react';
+import {ArrowRight, PlusCircle, Globe, Heart, GraduationCap, Vote, Shield, Search, SlidersHorizontal, X, Home as HomeIcon, LocateFixed, Edit2} from 'lucide-react';
 import {Button} from "@/components/ui/button";
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select";
 import OccurrenceMap from '@/components/shared/OccurrenceMap';
@@ -83,7 +83,7 @@ export default function Home() {
 
   const {data: occurrences = [], isLoading} = useQuery({
     queryKey: ['occurrences'],
-    queryFn: () => base44.entities.Occurrence.list('-created_date', 100),
+    queryFn: () => appApi.entities.Occurrence.list('-created_date', 100),
   });
 
   const filtered = occurrences.filter(o => {

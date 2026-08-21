@@ -137,19 +137,19 @@ export default function AdminLayout() {
  return (
  <div className="flex h-screen bg-background overflow-hidden">
  {/* Mobile overlay */}
- {mobileOpen && <div className="fixed inset-0 bg-black/50 z-30 lg:hidden" onClick={() => setMobileOpen(false)} />}
+ {mobileOpen && <div className="fixed inset-0 bg-black/50 z-[9998] lg:hidden" onClick={() => setMobileOpen(false)} />}
 
  {/* Sidebar desktop */}
- <aside className={`hidden lg:flex flex-col bg-sidebar-background border-r border-sidebar-border transition-all duration-300 relative ${collapsed ? 'w-16' : 'w-60'}`}>
+ <aside className={`hidden lg:flex flex-col bg-sidebar border-r border-sidebar-border transition-all duration-300 relative ${collapsed ? 'w-16' : 'w-60'}`}>
  <SidebarContent />
  <button onClick={() => setCollapsed(c => !c)}
- className="absolute bottom-20 -right-3 w-6 h-6 rounded-full bg-sidebar-background border border-sidebar-border flex items-center justify-center shadow-sm z-10 hover:bg-sidebar-accent transition-colors">
+ className="absolute bottom-20 -right-3 w-6 h-6 rounded-full bg-sidebar border border-sidebar-border flex items-center justify-center shadow-sm z-10 hover:bg-sidebar-accent transition-colors">
  <ChevronLeft className={`w-3 h-3 text-sidebar-foreground/50 transition-transform duration-300 ${collapsed ? 'rotate-180' : ''}`} />
  </button>
  </aside>
 
  {/* Sidebar mobile */}
- <aside className={`fixed left-0 top-0 bottom-0 w-60 bg-sidebar-background border-r border-sidebar-border z-40 lg:hidden transition-transform duration-300 ${mobileOpen ? 'translate-x-0' : '-translate-x-full'}`}>
+ <aside className={`fixed left-0 top-0 bottom-0 w-60 bg-sidebar border-r border-sidebar-border z-[9999] lg:hidden transition-transform duration-300 ${mobileOpen ? 'translate-x-0' : '-translate-x-full'}`}>
  <SidebarContent />
  </aside>
 
@@ -161,7 +161,7 @@ export default function AdminLayout() {
  <Menu className="w-5 h-5" />
  </button>
  <h1 className="font-bold text-lg text-foreground hidden md:block">
- <span className="text-muted-foreground/60 font-normal block text-xs">{currentItem?.group ? GROUP_LABELS[currentItem.group] : 'Zeldoria'}</span>
+ <span className="text-muted-foreground/60 font-normal block text-xs">{currentItem?.group ? GROUP_LABELS[currentItem.group] : 'Zeladoria Cidades'}</span>
  {currentItem?.label || 'Admin'}
  </h1>
  </div>

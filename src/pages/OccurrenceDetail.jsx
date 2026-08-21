@@ -1,6 +1,6 @@
 import React, {useEffect, useMemo, useRef, useState} from 'react';
 import {useParams, Link} from 'react-router-dom';
-import {base44} from '@/api/base44Client';
+import {appApi} from '@/services/app-api';
 import {useMutation, useQuery, useQueryClient} from '@tanstack/react-query';
 import {useAuth} from '@/lib/AuthContext';
 import {Card, CardContent, CardHeader, CardTitle} from '@/components/ui/card';
@@ -86,7 +86,7 @@ export default function OccurrenceDetail() {
 
   const occurrenceQuery = useQuery({
     queryKey: ['occurrence', id],
-    queryFn: () => base44.entities.Occurrence.filter({id}, '-created_date', 1),
+    queryFn: () => appApi.entities.Occurrence.filter({id}, '-created_date', 1),
     enabled: !!id,
   });
 
@@ -95,25 +95,25 @@ export default function OccurrenceDetail() {
 
   const commentsQuery = useQuery({
     queryKey: ['occurrence-comments', id],
-    queryFn: () => base44.entities.OccurrenceComment.filter({occurrence_id: id}, 'created_date', 200),
+    queryFn: () => appApi.entities.OccurrenceComment.filter({occurrence_id: id}, 'created_date', 200),
     enabled: !!occ?.id,
   });
 
   const supportsQuery = useQuery({
     queryKey: ['occurrence-supports', id],
-    queryFn: () => base44.entities.OccurrenceSupport.filter({occurrence_id: id}, '-created_date', 500),
+    queryFn: () => appApi.entities.OccurrenceSupport.filter({occurrence_id: id}, '-created_date', 500),
     enabled: !!occ?.id,
   });
 
   const departmentsQuery = useQuery({
     queryKey: ['detail-departments'],
-    queryFn: () => base44.entities.Department.list(),
+    queryFn: () => appApi.entities.Department.list(),
     enabled: isMunicipal,
   });
 
   const teamsQuery = useQuery({
     queryKey: ['detail-teams'],
-    queryFn: () => base44.entities.Team.list(),
+    queryFn: () => appApi.entities.Team.list(),
     enabled: isMunicipal,
   });
 
@@ -187,7 +187,7 @@ export default function OccurrenceDetail() {
 
   const writeAudit = async ({action, description, oldData = undefined, newData = undefined}) => {
     try {
-      await base44.entities.AuditLog.create({
+      await appApi.entities.AuditLog.create({
         user_email: user?.email || 'sistema',
         action,
         entity_type: 'Occurrence',
@@ -204,7 +204,7 @@ export default function OccurrenceDetail() {
   const notifyCitizen = async ({title, message, type = 'status_update'}) => {
     if (!occ?.created_by || occ.created_by === user?.email) return;
     try {
-      await base44.entities.Notification.create({
+      await appApi.entities.Notification.create({
         user_email: occ.created_by,
         title,
         message,
@@ -229,7 +229,7 @@ export default function OccurrenceDetail() {
       }),
     ];
 
-    await base44.entities.Occurrence.update(occ.id, {
+    await appApi.entities.Occurrence.update(occ.id, {
       ...data,
       change_history: nextHistory,
       last_public_update: new Date().toISOString(),
@@ -250,13 +250,13 @@ export default function OccurrenceDetail() {
   const supportMutation = useMutation({
     mutationFn: async () => {
       if (hasSupported) return;
-      await base44.entities.OccurrenceSupport.create({
+      await appApi.entities.OccurrenceSupport.create({
         occurrence_id: occ.id,
         neighborhood: user?.neighborhood || occ.neighborhood,
       });
 
       try {
-        await base44.entities.Occurrence.update(occ.id, {support_count: supportCount + 1});
+        await appApi.entities.Occurrence.update(occ.id, {support_count: supportCount + 1});
       } catch {
         // Support is stored even when the occurrence itself cannot be denormalized by RLS.
       }
@@ -281,7 +281,7 @@ export default function OccurrenceDetail() {
       const attachmentTypes = [];
 
       for (const file of files) {
-        const {file_url} = await base44.integrations.Core.UploadFile({file});
+        const {file_url} = await appApi.integrations.Core.UploadFile({file});
         attachments.push(file_url);
         attachmentTypes.push(file.type);
       }
@@ -289,7 +289,7 @@ export default function OccurrenceDetail() {
       const authorRole = isMunicipal ? (['equipe', 'equipe_campo'].includes(user?.role) ? 'equipe' : 'prefeitura') : 'cidadao';
       const visibility = isMunicipal ? 'private' : 'private';
 
-      await base44.entities.OccurrenceComment.create({
+      await appApi.entities.OccurrenceComment.create({
         occurrence_id: occ.id,
         message,
         author_role: authorRole,
@@ -363,7 +363,7 @@ export default function OccurrenceDetail() {
           description: 'Morador confirmou a resolução da ocorrência.',
         });
 
-        await base44.entities.OccurrenceComment.create({
+        await appApi.entities.OccurrenceComment.create({
           occurrence_id: occ.id,
           message: 'O morador confirmou que o problema foi resolvido.',
           author_role: 'cidadao',
@@ -401,7 +401,7 @@ export default function OccurrenceDetail() {
           notify: true,
         });
 
-        await base44.entities.OccurrenceComment.create({
+        await appApi.entities.OccurrenceComment.create({
           occurrence_id: occ.id,
           message: reopenReason.trim(),
           author_role: 'cidadao',
@@ -425,7 +425,7 @@ export default function OccurrenceDetail() {
           description: `Morador avaliou o atendimento com ${ratingValue} estrela${ratingValue > 1 ? 's' : ''}.`,
         });
 
-        await base44.entities.OccurrenceComment.create({
+        await appApi.entities.OccurrenceComment.create({
           occurrence_id: occ.id,
           message: ratingComment.trim() || `Avaliação registrada: ${ratingValue} de 5 estrelas.`,
           author_role: 'cidadao',

@@ -44,7 +44,7 @@ export default function OccurrenceMap({
  const safeCenter = isValidCoordinate(center?.[0], center?.[1]) ? center : DEFAULT_MAP_CENTER;
 
  return (
- <div style={{height}} className="rounded-xl overflow-hidden border border-border shadow-sm">
+ <div style={{height}} className="relative z-0 rounded-xl overflow-hidden border border-border shadow-sm">
  <MapContainer center={safeCenter} zoom={zoom} style={{height: '100%', width: '100%'}} scrollWheelZoom>
  <TileLayer
  attribution='&copy; OpenStreetMap'

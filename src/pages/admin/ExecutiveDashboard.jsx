@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {base44} from '@/api/base44Client';
+import {appApi} from '@/services/app-api';
 import {useQuery} from '@tanstack/react-query';
 import {Card, CardContent, CardHeader, CardTitle} from"@/components/ui/card";
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from"@/components/ui/select";
@@ -50,31 +50,31 @@ export default function ExecutiveDashboard() {
 
  const {data: occurrences = []} = useQuery({
  queryKey: ['exec-occurrences'],
- queryFn: () => base44.entities.Occurrence.list('-created_date', 1000),
+ queryFn: () => appApi.entities.Occurrence.list('-created_date', 1000),
 });
  const {data: teams = []} = useQuery({
  queryKey: ['teams'],
- queryFn: () => base44.entities.Team.list(),
+ queryFn: () => appApi.entities.Team.list(),
 });
  const {data: departments = []} = useQuery({
  queryKey: ['departments'],
- queryFn: () => base44.entities.Department.list(),
+ queryFn: () => appApi.entities.Department.list(),
 });
  const {data: appointments = []} = useQuery({
  queryKey: ['exec-appointments'],
- queryFn: () => base44.entities.HealthAppointment.list('-created_date', 500),
+ queryFn: () => appApi.entities.HealthAppointment.list('-created_date', 500),
 });
  const {data: enrollments = []} = useQuery({
  queryKey: ['exec-enrollments'],
- queryFn: () => base44.entities.SchoolEnrollment.list('-created_date', 500),
+ queryFn: () => appApi.entities.SchoolEnrollment.list('-created_date', 500),
 });
  const {data: schools = []} = useQuery({
  queryKey: ['exec-schools'],
- queryFn: () => base44.entities.School.list(),
+ queryFn: () => appApi.entities.School.list(),
 });
  const {data: doctors = []} = useQuery({
  queryKey: ['exec-doctors'],
- queryFn: () => base44.entities.HealthDoctor.list(),
+ queryFn: () => appApi.entities.HealthDoctor.list(),
 });
 
  const days = parseInt(period);

@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {base44} from '@/api/base44Client';
+import {appApi} from '@/services/app-api';
 import {useQuery, useMutation, useQueryClient} from '@tanstack/react-query';
 import {Card, CardContent} from"@/components/ui/card";
 import {Badge} from"@/components/ui/badge";
@@ -65,21 +65,21 @@ export default function AdminHealth() {
  const [doctorModal, setDoctorModal] = useState(false);
  const [editingDoctor, setEditingDoctor] = useState(null);
 
- const {data: doctors = []} = useQuery({queryKey: ['health-doctors'], queryFn: () => base44.entities.HealthDoctor.list('-created_date', 100)});
- const {data: appointments = []} = useQuery({queryKey: ['health-appointments'], queryFn: () => base44.entities.HealthAppointment.list('-created_date', 100)});
+ const {data: doctors = []} = useQuery({queryKey: ['health-doctors'], queryFn: () => appApi.entities.HealthDoctor.list('-created_date', 100)});
+ const {data: appointments = []} = useQuery({queryKey: ['health-appointments'], queryFn: () => appApi.entities.HealthAppointment.list('-created_date', 100)});
 
  const saveDoctorMutation = useMutation({
- mutationFn: (form) => editingDoctor ? base44.entities.HealthDoctor.update(editingDoctor.id, form) : base44.entities.HealthDoctor.create(form),
+ mutationFn: (form) => editingDoctor ? appApi.entities.HealthDoctor.update(editingDoctor.id, form) : appApi.entities.HealthDoctor.create(form),
  onSuccess: () => {qc.invalidateQueries({queryKey: ['health-doctors']}); setDoctorModal(false); setEditingDoctor(null); toast.success('Médico salvo!');}
 });
 
  const deleteDoctorMutation = useMutation({
- mutationFn: (id) => base44.entities.HealthDoctor.delete(id),
+ mutationFn: (id) => appApi.entities.HealthDoctor.delete(id),
  onSuccess: () => {qc.invalidateQueries({queryKey: ['health-doctors']}); toast.success('Médico removido');}
 });
 
  const updateAptMutation = useMutation({
- mutationFn: ({id, data}) => base44.entities.HealthAppointment.update(id, data),
+ mutationFn: ({id, data}) => appApi.entities.HealthAppointment.update(id, data),
  onSuccess: () => {qc.invalidateQueries({queryKey: ['health-appointments']}); toast.success('Agendamento atualizado');}
 });
 

@@ -1,7 +1,7 @@
 import React, {useRef} from 'react';
 import {Camera, X, ImagePlus} from 'lucide-react';
 import {Button} from"@/components/ui/button";
-import {base44} from '@/api/base44Client';
+import {appApi} from '@/services/app-api';
 
 export default function PhotoUploader({photos, setPhotos, maxPhotos = 5}) {
  const fileInputRef = useRef(null);
@@ -11,7 +11,7 @@ export default function PhotoUploader({photos, setPhotos, maxPhotos = 5}) {
  const files = Array.from(e.target.files);
  for (const file of files) {
  if (photos.length >= maxPhotos) break;
- const {file_url} = await base44.integrations.Core.UploadFile({file});
+ const {file_url} = await appApi.integrations.Core.UploadFile({file});
  setPhotos(prev => [...prev, file_url]);
 }
  e.target.value = '';

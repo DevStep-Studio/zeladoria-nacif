@@ -1,5 +1,5 @@
 import React from 'react';
-import {base44} from '@/api/base44Client';
+import {appApi} from '@/services/app-api';
 import {useQuery} from '@tanstack/react-query';
 import {useAuth} from '@/lib/AuthContext';
 import {Card, CardContent} from"@/components/ui/card";
@@ -20,7 +20,7 @@ export default function MyEnrollments() {
 
  const {data: enrollments = [], isLoading} = useQuery({
  queryKey: ['my-enrollments', user?.email],
- queryFn: () => base44.entities.SchoolEnrollment.filter({guardian_email: user?.email}, '-created_date', 50),
+ queryFn: () => appApi.entities.SchoolEnrollment.filter({guardian_email: user?.email}, '-created_date', 50),
  enabled: !!user?.email,
 });
 
