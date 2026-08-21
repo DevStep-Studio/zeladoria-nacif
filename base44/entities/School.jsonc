@@ -1,0 +1,77 @@
+{
+  "name": "School",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string"
+    },
+    "photo": {
+      "type": "string"
+    },
+    "address": {
+      "type": "string"
+    },
+    "neighborhood": {
+      "type": "string"
+    },
+    "latitude": {
+      "type": "number"
+    },
+    "longitude": {
+      "type": "number"
+    },
+    "phone": {
+      "type": "string"
+    },
+    "director": {
+      "type": "string"
+    },
+    "grades": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Available grades e.g. ['1\u00ba ano','2\u00ba ano']"
+    },
+    "shifts": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "manha",
+          "tarde",
+          "integral",
+          "noturno"
+        ]
+      }
+    },
+    "total_slots": {
+      "type": "number",
+      "default": 0
+    },
+    "available_slots": {
+      "type": "number",
+      "default": 0
+    },
+    "rating": {
+      "type": "number",
+      "default": 0
+    },
+    "type": {
+      "type": "string",
+      "enum": [
+        "municipal",
+        "estadual",
+        "federal",
+        "creche",
+        "cei"
+      ],
+      "default": "municipal"
+    }
+  },
+  "required": [
+    "name",
+    "address",
+    "neighborhood"
+  ]
+}

@@ -1,0 +1,162 @@
+{
+  "name": "OccurrenceComment",
+  "type": "object",
+  "properties": {
+    "occurrence_id": {
+      "type": "string",
+      "description": "Occurrence this comment belongs to"
+    },
+    "message": {
+      "type": "string",
+      "description": "Comment body"
+    },
+    "author_role": {
+      "type": "string",
+      "enum": [
+        "cidadao",
+        "prefeitura",
+        "equipe"
+      ],
+      "default": "cidadao"
+    },
+    "visibility": {
+      "type": "string",
+      "enum": [
+        "private",
+        "public",
+        "internal"
+      ],
+      "default": "private",
+      "description": "private is visible to author/admin/team, public can be shown without personal data, internal is municipal staff only"
+    },
+    "target_user_email": {
+      "type": "string",
+      "description": "Citizen email for prefeitura replies without exposing the address in UI"
+    },
+    "attachments": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Attachment URLs"
+    },
+    "attachment_types": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "MIME types matching attachments"
+    },
+    "event_type": {
+      "type": "string",
+      "enum": [
+        "comment",
+        "citizen_update",
+        "status_response",
+        "resolution_confirmation",
+        "reopen_request",
+        "rating"
+      ],
+      "default": "comment"
+    }
+  },
+  "required": [
+    "occurrence_id",
+    "message"
+  ],
+  "rls": {
+    "create": {},
+    "read": {
+      "$or": [
+        {
+          "created_by": "{{user.email}}"
+        },
+        {
+          "target_user_email": "{{user.email}}"
+        },
+        {
+          "visibility": "public"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        },
+        {
+          "user_condition": {
+            "role": "gestor"
+          }
+        },
+        {
+          "user_condition": {
+            "role": "atendente"
+          }
+        },
+        {
+          "user_condition": {
+            "role": "fiscal"
+          }
+        },
+        {
+          "user_condition": {
+            "role": "equipe_campo"
+          }
+        },
+        {
+          "user_condition": {
+            "role": "equipe"
+          }
+        }
+      ]
+    },
+    "update": {
+      "$or": [
+        {
+          "created_by": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        },
+        {
+          "user_condition": {
+            "role": "gestor"
+          }
+        },
+        {
+          "user_condition": {
+            "role": "atendente"
+          }
+        },
+        {
+          "user_condition": {
+            "role": "fiscal"
+          }
+        },
+        {
+          "user_condition": {
+            "role": "equipe_campo"
+          }
+        },
+        {
+          "user_condition": {
+            "role": "equipe"
+          }
+        }
+      ]
+    },
+    "delete": {
+      "$or": [
+        {
+          "created_by": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    }
+  }
+}

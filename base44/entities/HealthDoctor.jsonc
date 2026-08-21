@@ -1,0 +1,78 @@
+{
+  "name": "HealthDoctor",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Doctor's full name"
+    },
+    "specialty": {
+      "type": "string",
+      "enum": [
+        "clinico_geral",
+        "pediatria",
+        "cardiologia",
+        "ortopedia",
+        "ginecologia",
+        "neurologia",
+        "psiquiatria",
+        "oftalmologia",
+        "dermatologia",
+        "odontologia"
+      ],
+      "description": "Medical specialty"
+    },
+    "unit_name": {
+      "type": "string",
+      "description": "Health unit name"
+    },
+    "unit_address": {
+      "type": "string",
+      "description": "Unit address"
+    },
+    "neighborhood": {
+      "type": "string",
+      "description": "Neighborhood"
+    },
+    "photo": {
+      "type": "string",
+      "description": "Doctor photo URL"
+    },
+    "schedule": {
+      "type": "string",
+      "description": "Schedule e.g. Seg-Sex 08:00-17:00"
+    },
+    "available_slots": {
+      "type": "number",
+      "default": 10,
+      "description": "Available appointment slots"
+    },
+    "total_slots": {
+      "type": "number",
+      "default": 20
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "disponivel",
+        "ocupado",
+        "indisponivel"
+      ],
+      "default": "disponivel"
+    },
+    "latitude": {
+      "type": "number"
+    },
+    "longitude": {
+      "type": "number"
+    },
+    "crm": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "name",
+    "specialty",
+    "unit_name"
+  ]
+}

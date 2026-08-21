@@ -1,0 +1,81 @@
+{
+  "name": "SchoolEnrollment",
+  "type": "object",
+  "properties": {
+    "student_name": {
+      "type": "string"
+    },
+    "student_age": {
+      "type": "number"
+    },
+    "grade_desired": {
+      "type": "string"
+    },
+    "shift": {
+      "type": "string",
+      "enum": [
+        "manha",
+        "tarde",
+        "integral",
+        "noturno"
+      ]
+    },
+    "guardian_name": {
+      "type": "string"
+    },
+    "guardian_phone": {
+      "type": "string"
+    },
+    "guardian_email": {
+      "type": "string"
+    },
+    "address": {
+      "type": "string"
+    },
+    "neighborhood": {
+      "type": "string"
+    },
+    "school_id": {
+      "type": "string"
+    },
+    "school_name": {
+      "type": "string"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "pendente",
+        "em_analise",
+        "aprovada",
+        "recusada",
+        "fila_espera",
+        "matriculado"
+      ],
+      "default": "pendente"
+    },
+    "protocol": {
+      "type": "string"
+    },
+    "student_doc_url": {
+      "type": "string"
+    },
+    "residence_proof_url": {
+      "type": "string"
+    },
+    "admin_notes": {
+      "type": "string"
+    },
+    "priority_score": {
+      "type": "number",
+      "default": 0
+    }
+  },
+  "required": [
+    "student_name",
+    "student_age",
+    "grade_desired",
+    "shift",
+    "guardian_name",
+    "guardian_phone"
+  ]
+}

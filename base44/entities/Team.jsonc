@@ -1,0 +1,126 @@
+{
+  "name": "Team",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Team name"
+    },
+    "department": {
+      "type": "string",
+      "description": "Department this team belongs to"
+    },
+    "leader": {
+      "type": "string",
+      "description": "Team leader name"
+    },
+    "phone": {
+      "type": "string",
+      "description": "Contact phone"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "disponivel",
+        "em_campo",
+        "indisponivel"
+      ],
+      "default": "disponivel",
+      "description": "Current team status"
+    },
+    "members_count": {
+      "type": "number",
+      "description": "Number of team members"
+    },
+    "latitude": {
+      "type": "number",
+      "description": "Current latitude"
+    },
+    "longitude": {
+      "type": "number",
+      "description": "Current longitude"
+    }
+  },
+  "required": [
+    "name"
+  ],
+  "rls": {
+    "create": {
+      "$or": [
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        },
+        {
+          "user_condition": {
+            "role": "gestor"
+          }
+        }
+      ]
+    },
+    "read": {
+      "$or": [
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        },
+        {
+          "user_condition": {
+            "role": "gestor"
+          }
+        },
+        {
+          "user_condition": {
+            "role": "atendente"
+          }
+        },
+        {
+          "user_condition": {
+            "role": "fiscal"
+          }
+        },
+        {
+          "user_condition": {
+            "role": "equipe_campo"
+          }
+        },
+        {
+          "user_condition": {
+            "role": "equipe"
+          }
+        }
+      ]
+    },
+    "update": {
+      "$or": [
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        },
+        {
+          "user_condition": {
+            "role": "gestor"
+          }
+        },
+        {
+          "user_condition": {
+            "role": "equipe_campo"
+          }
+        },
+        {
+          "user_condition": {
+            "role": "equipe"
+          }
+        }
+      ]
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

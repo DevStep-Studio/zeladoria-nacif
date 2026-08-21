@@ -1,0 +1,51 @@
+{
+  "name": "CitizenReputation",
+  "type": "object",
+  "properties": {
+    "user_email": {
+      "type": "string",
+      "description": "Citizen email"
+    },
+    "score": {
+      "type": "number",
+      "default": 100,
+      "description": "Reputation score 0-200"
+    },
+    "total_reports": {
+      "type": "number",
+      "default": 0
+    },
+    "resolved_reports": {
+      "type": "number",
+      "default": 0
+    },
+    "flagged_reports": {
+      "type": "number",
+      "default": 0
+    },
+    "badges": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Earned badges"
+    },
+    "level": {
+      "type": "string",
+      "enum": [
+        "iniciante",
+        "colaborador",
+        "veterano",
+        "especialista"
+      ],
+      "default": "iniciante"
+    },
+    "trusted": {
+      "type": "boolean",
+      "default": false
+    }
+  },
+  "required": [
+    "user_email"
+  ]
+}

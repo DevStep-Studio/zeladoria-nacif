@@ -1,0 +1,103 @@
+{
+  "name": "CivilDefenseShelter",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Shelter name"
+    },
+    "address": {
+      "type": "string",
+      "description": "Shelter address"
+    },
+    "neighborhood": {
+      "type": "string",
+      "description": "Shelter neighborhood"
+    },
+    "city": {
+      "type": "string",
+      "description": "Shelter city"
+    },
+    "state": {
+      "type": "string",
+      "description": "Shelter state"
+    },
+    "latitude": {
+      "type": "number",
+      "description": "Shelter latitude"
+    },
+    "longitude": {
+      "type": "number",
+      "description": "Shelter longitude"
+    },
+    "capacity": {
+      "type": "number",
+      "description": "Total shelter capacity"
+    },
+    "occupied": {
+      "type": "number",
+      "default": 0,
+      "description": "Current occupied places"
+    },
+    "active": {
+      "type": "boolean",
+      "default": true,
+      "description": "Whether this shelter is active"
+    },
+    "phone": {
+      "type": "string",
+      "description": "Shelter contact phone"
+    },
+    "updated_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Last public update date"
+    }
+  },
+  "rls": {
+    "create": {
+      "$or": [
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        },
+        {
+          "user_condition": {
+            "role": "gestor"
+          }
+        },
+        {
+          "user_condition": {
+            "role": "atendente"
+          }
+        }
+      ]
+    },
+    "read": {},
+    "update": {
+      "$or": [
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        },
+        {
+          "user_condition": {
+            "role": "gestor"
+          }
+        },
+        {
+          "user_condition": {
+            "role": "atendente"
+          }
+        }
+      ]
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

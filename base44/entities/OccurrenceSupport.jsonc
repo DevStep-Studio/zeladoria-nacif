@@ -1,0 +1,45 @@
+{
+  "name": "OccurrenceSupport",
+  "type": "object",
+  "properties": {
+    "occurrence_id": {
+      "type": "string",
+      "description": "Supported occurrence ID"
+    },
+    "neighborhood": {
+      "type": "string",
+      "description": "Optional neighborhood of the supporter for aggregate analysis"
+    }
+  },
+  "required": [
+    "occurrence_id"
+  ],
+  "rls": {
+    "create": {},
+    "read": {},
+    "update": {
+      "$or": [
+        {
+          "created_by": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "delete": {
+      "$or": [
+        {
+          "created_by": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    }
+  }
+}

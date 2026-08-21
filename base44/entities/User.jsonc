@@ -1,0 +1,111 @@
+{
+  "name": "User",
+  "type": "object",
+  "properties": {
+    "role": {
+      "type": "string",
+      "enum": [
+        "cidadao",
+        "admin",
+        "gestor",
+        "atendente",
+        "fiscal",
+        "equipe_campo",
+        "equipe"
+      ],
+      "default": "cidadao",
+      "description": "User role"
+    },
+    "full_name": {
+      "type": "string",
+      "description": "Full name"
+    },
+    "phone": {
+      "type": "string",
+      "description": "Phone number"
+    },
+    "profile_photo_url": {
+      "type": "string",
+      "description": "Profile photo URL stored by the upload integration"
+    },
+    "postal_code": {
+      "type": "string",
+      "description": "User postal code"
+    },
+    "street": {
+      "type": "string",
+      "description": "User street address"
+    },
+    "address_number": {
+      "type": "string",
+      "description": "User address number"
+    },
+    "address_complement": {
+      "type": "string",
+      "description": "User address complement"
+    },
+    "neighborhood": {
+      "type": "string",
+      "description": "User's neighborhood"
+    },
+    "city": {
+      "type": "string",
+      "description": "User city"
+    },
+    "state": {
+      "type": "string",
+      "description": "User state"
+    },
+    "cpf": {
+      "type": "string",
+      "description": "CPF (optional)"
+    },
+    "last_location_latitude": {
+      "type": "number",
+      "description": "Last valid user location latitude"
+    },
+    "last_location_longitude": {
+      "type": "number",
+      "description": "Last valid user location longitude"
+    },
+    "last_location_accuracy": {
+      "type": "number",
+      "description": "Last valid user location accuracy in meters"
+    },
+    "last_location_address": {
+      "type": "string",
+      "description": "Last valid user reverse-geocoded address"
+    },
+    "last_location_neighborhood": {
+      "type": "string",
+      "description": "Last valid user location neighborhood"
+    },
+    "last_location_city": {
+      "type": "string",
+      "description": "Last valid user location city"
+    },
+    "last_location_state": {
+      "type": "string",
+      "description": "Last valid user location state"
+    },
+    "last_location_postal_code": {
+      "type": "string",
+      "description": "Last valid user location postal code"
+    },
+    "last_location_source": {
+      "type": "string",
+      "enum": [
+        "device",
+        "manual",
+        "manual_cep",
+        "saved"
+      ],
+      "description": "How the last valid user location was obtained"
+    },
+    "last_location_updated_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When the last valid user location was updated"
+    }
+  }
+}

@@ -1,0 +1,285 @@
+{
+  "name": "Occurrence",
+  "type": "object",
+  "properties": {
+    "title": {
+      "type": "string",
+      "description": "Brief title of the occurrence"
+    },
+    "description": {
+      "type": "string",
+      "description": "Detailed description of the problem"
+    },
+    "category": {
+      "type": "string",
+      "enum": [
+        "limpeza_publica",
+        "poste_apagado",
+        "buraco_na_rua",
+        "vazamento",
+        "poda_de_arvore",
+        "denuncia",
+        "saude_publica",
+        "matricula_escolar",
+        "transito",
+        "enchente",
+        "vandalismo"
+      ],
+      "description": "Category of the occurrence"
+    },
+    "subcategory": {
+      "type": "string",
+      "description": "Optional subcategory for more precise routing"
+    },
+    "protocol_number": {
+      "type": "string",
+      "description": "Public citizen-facing protocol number"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "registrada",
+        "recebida",
+        "em_triagem",
+        "encaminhada",
+        "aguardando_vistoria",
+        "programada",
+        "em_execucao",
+        "aguardando_material",
+        "concluida",
+        "nao_procedente",
+        "duplicada",
+        "cancelada",
+        "reaberta",
+        "aberto",
+        "em_analise",
+        "equipe_enviada",
+        "resolvido"
+      ],
+      "default": "registrada",
+      "description": "Current status"
+    },
+    "priority": {
+      "type": "string",
+      "enum": [
+        "baixa",
+        "media",
+        "alta",
+        "urgente",
+        "critica"
+      ],
+      "default": "media",
+      "description": "Priority level"
+    },
+    "photos": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Array of photo URLs"
+    },
+    "videos": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Array of video URLs"
+    },
+    "attachments": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      },
+      "description": "Structured attachments added to the occurrence"
+    },
+    "latitude": {
+      "type": "number",
+      "description": "GPS latitude"
+    },
+    "longitude": {
+      "type": "number",
+      "description": "GPS longitude"
+    },
+    "location_source": {
+      "type": "string",
+      "enum": [
+        "device",
+        "manual",
+        "municipality_fallback"
+      ],
+      "description": "How the saved location was obtained"
+    },
+    "municipality_name": {
+      "type": "string",
+      "description": "Municipality configured when the occurrence was registered"
+    },
+    "address": {
+      "type": "string",
+      "description": "Address or neighborhood"
+    },
+    "neighborhood": {
+      "type": "string",
+      "description": "Neighborhood name"
+    },
+    "department_id": {
+      "type": "string",
+      "description": "Assigned department/secretaria ID"
+    },
+    "department_name": {
+      "type": "string",
+      "description": "Public department/secretaria name copied at assignment time"
+    },
+    "team_id": {
+      "type": "string",
+      "description": "Assigned team ID"
+    },
+    "team_name": {
+      "type": "string",
+      "description": "Public team name copied at assignment time when allowed"
+    },
+    "public_responsible": {
+      "type": "string",
+      "description": "Public name or role of the current responsible person, when allowed"
+    },
+    "public_responsible_enabled": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether public_responsible can be shown to citizens"
+    },
+    "estimated_deadline": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Estimated service deadline"
+    },
+    "resolved_date": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When it was resolved"
+    },
+    "resolution_confirmed": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether the citizen confirmed the issue was solved"
+    },
+    "resolution_confirmed_date": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When the citizen confirmed resolution"
+    },
+    "reopened_count": {
+      "type": "number",
+      "default": 0,
+      "description": "Number of times the occurrence was reopened"
+    },
+    "reopen_reason": {
+      "type": "string",
+      "description": "Latest citizen reopening reason"
+    },
+    "support_count": {
+      "type": "number",
+      "default": 0,
+      "description": "Denormalized number of citizen supports"
+    },
+    "rating": {
+      "type": "number",
+      "description": "Citizen rating from 1 to 5 after conclusion"
+    },
+    "rating_comment": {
+      "type": "string",
+      "description": "Optional citizen rating comment"
+    },
+    "rating_date": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When the citizen rated the service"
+    },
+    "timeline": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      },
+      "description": "Public timeline events for citizen tracking"
+    },
+    "change_history": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      },
+      "description": "Important change history visible according to page permissions"
+    },
+    "last_public_update": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Last public-facing update date"
+    },
+    "duplicate_of": {
+      "type": "string",
+      "description": "Occurrence ID this one duplicates, when applicable"
+    },
+    "spam_score": {
+      "type": "number",
+      "default": 0,
+      "description": "Heuristic spam risk score"
+    },
+    "admin_notes": {
+      "type": "string",
+      "description": "Internal admin notes"
+    },
+    "ai_analysis": {
+      "type": "object",
+      "description": "AI analysis result"
+    }
+  },
+  "required": [
+    "description",
+    "category",
+    "latitude",
+    "longitude"
+  ],
+  "rls": {
+    "create": {},
+    "read": {},
+    "update": {
+      "$or": [
+        {
+          "created_by": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        },
+        {
+          "user_condition": {
+            "role": "gestor"
+          }
+        },
+        {
+          "user_condition": {
+            "role": "atendente"
+          }
+        },
+        {
+          "user_condition": {
+            "role": "fiscal"
+          }
+        },
+        {
+          "user_condition": {
+            "role": "equipe_campo"
+          }
+        },
+        {
+          "user_condition": {
+            "role": "equipe"
+          }
+        }
+      ]
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

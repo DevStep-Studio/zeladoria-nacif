@@ -1,0 +1,81 @@
+{
+  "name": "HealthAppointment",
+  "type": "object",
+  "properties": {
+    "patient_name": {
+      "type": "string"
+    },
+    "patient_email": {
+      "type": "string"
+    },
+    "patient_phone": {
+      "type": "string"
+    },
+    "doctor_id": {
+      "type": "string"
+    },
+    "doctor_name": {
+      "type": "string"
+    },
+    "specialty": {
+      "type": "string"
+    },
+    "unit_name": {
+      "type": "string"
+    },
+    "appointment_date": {
+      "type": "string",
+      "format": "date"
+    },
+    "appointment_time": {
+      "type": "string"
+    },
+    "urgency": {
+      "type": "string",
+      "enum": [
+        "baixa",
+        "media",
+        "alta",
+        "urgente"
+      ],
+      "default": "media"
+    },
+    "appointment_type": {
+      "type": "string",
+      "enum": [
+        "presencial",
+        "teleconsulta"
+      ],
+      "default": "presencial"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "agendado",
+        "confirmado",
+        "cancelado",
+        "realizado",
+        "fila_espera"
+      ],
+      "default": "agendado"
+    },
+    "protocol": {
+      "type": "string"
+    },
+    "notes": {
+      "type": "string"
+    },
+    "rating": {
+      "type": "number"
+    },
+    "rating_comment": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "patient_name",
+    "doctor_id",
+    "appointment_date",
+    "appointment_time"
+  ]
+}

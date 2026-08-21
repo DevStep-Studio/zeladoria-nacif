@@ -1,0 +1,106 @@
+{
+  "name": "CivilDefenseAlert",
+  "type": "object",
+  "properties": {
+    "title": {
+      "type": "string",
+      "description": "Public alert title"
+    },
+    "type": {
+      "type": "string",
+      "description": "Alert type, such as rain, flood, wind or heat"
+    },
+    "level": {
+      "type": "string",
+      "enum": [
+        "verde",
+        "amarelo",
+        "laranja",
+        "vermelho"
+      ],
+      "default": "amarelo",
+      "description": "Civil defense severity level"
+    },
+    "message": {
+      "type": "string",
+      "description": "Public alert message"
+    },
+    "region": {
+      "type": "string",
+      "description": "Neighborhood, district or region affected"
+    },
+    "city": {
+      "type": "string",
+      "description": "City affected"
+    },
+    "state": {
+      "type": "string",
+      "description": "State affected"
+    },
+    "starts_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When the alert starts"
+    },
+    "ends_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When the alert ends"
+    },
+    "active": {
+      "type": "boolean",
+      "default": true,
+      "description": "Whether this alert should be shown"
+    },
+    "source": {
+      "type": "string",
+      "description": "Alert source"
+    }
+  },
+  "rls": {
+    "create": {
+      "$or": [
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        },
+        {
+          "user_condition": {
+            "role": "gestor"
+          }
+        },
+        {
+          "user_condition": {
+            "role": "atendente"
+          }
+        }
+      ]
+    },
+    "read": {},
+    "update": {
+      "$or": [
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        },
+        {
+          "user_condition": {
+            "role": "gestor"
+          }
+        },
+        {
+          "user_condition": {
+            "role": "atendente"
+          }
+        }
+      ]
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}
