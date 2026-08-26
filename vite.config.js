@@ -29,8 +29,17 @@ export default defineConfig(async () => ({
       '@': fileURLToPath(new URL('./src', import.meta.url)),
     },
   },
+  build: {
+    sourcemap: false, // Desativa source maps para proteger o código-fonte original
+    minify: 'esbuild',
+    chunkSizeWarningLimit: 1200,
+  },
+  esbuild: {
+    drop: process.env.NODE_ENV === 'production' ? ['console', 'debugger'] : [],
+  },
   plugins: [
     ...(await createBase44Plugins()),
     react(),
   ]
 }));
+

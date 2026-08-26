@@ -2,6 +2,7 @@ import React, {useEffect, useState} from 'react';
 import {Outlet, Link, useLocation} from 'react-router-dom';
 import {motion, AnimatePresence} from 'framer-motion';
 import {Home, PlusCircle, ClipboardList, User, Heart, GraduationCap, Shield, Globe, MoreHorizontal} from 'lucide-react';
+import {useAuth} from '@/lib/AuthContext';
 import NotificationCenter from '@/components/shared/NotificationCenter';
 import SOSButton from '@/components/shared/SOSButton';
 import AIAssistant from '@/components/shared/AIAssistant';
@@ -34,6 +35,7 @@ const moreItems = [
 
 export default function CitizenLayout() {
  const location = useLocation();
+ const {user} = useAuth();
  const [moreOpen, setMoreOpen] = useState(false);
  const isMoreActive = moreItems.some(item => item.path === location.pathname);
 
@@ -54,7 +56,14 @@ export default function CitizenLayout() {
             <Shield className="w-3.5 h-3.5 text-emerald-400" />
             <span>Painel Super Admin</span>
           </Link>
+          {user?.is_investor && (
+            <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-amber-50 border border-amber-200 text-amber-800 text-[11px] font-bold">
+              <span className="w-1.5 h-1.5 rounded-full bg-amber-500 animate-ping" />
+              {user.investor_badge || 'Investidor • Sessão Confidencial'}
+            </span>
+          )}
         </div>
+
 
         <div className="flex items-center gap-4 text-on-surface-variant">
           {desktopItems.map(({path, icon: Icon, label}) => {

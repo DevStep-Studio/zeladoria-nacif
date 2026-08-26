@@ -34,6 +34,59 @@ export const SUPER_ADMIN_USER = {
   last_location_postal_code: '01310-100',
 };
 
+export const INVESTOR_USERS = {
+  user1: {
+    id: 'investor-user-01',
+    username: 'user1',
+    email: 'user1@zeladoria.com',
+    password: 'Z12345',
+    full_name: 'Investidor 01 (Acesso Completo)',
+    role: 'super_admin',
+    is_investor: true,
+    investor_badge: 'Investidor 01 • Sessão Confidencial',
+    phone: '(11) 99111-0001',
+    postal_code: '01310-100',
+    street: 'Avenida Paulista',
+    address_number: '1000',
+    address_complement: 'Suíte Executiva 1',
+    neighborhood: 'Bela Vista',
+    city: 'São Paulo',
+    state: 'SP',
+    last_location_latitude: -23.561684,
+    last_location_longitude: -46.655981,
+    last_location_address: 'Av. Paulista, 1000 - Bela Vista, São Paulo - SP',
+    last_location_city: 'São Paulo',
+    last_location_state: 'SP',
+    last_location_neighborhood: 'Bela Vista',
+    last_location_postal_code: '01310-100',
+  },
+  user2: {
+    id: 'investor-user-02',
+    username: 'user2',
+    email: 'user2@zeladoria.com',
+    password: 'Z12345',
+    full_name: 'Investidor 02 (Acesso Completo)',
+    role: 'super_admin',
+    is_investor: true,
+    investor_badge: 'Investidor 02 • Sessão Confidencial',
+    phone: '(11) 99222-0002',
+    postal_code: '01310-100',
+    street: 'Avenida Paulista',
+    address_number: '1000',
+    address_complement: 'Suíte Executiva 2',
+    neighborhood: 'Bela Vista',
+    city: 'São Paulo',
+    state: 'SP',
+    last_location_latitude: -23.561684,
+    last_location_longitude: -46.655981,
+    last_location_address: 'Av. Paulista, 1000 - Bela Vista, São Paulo - SP',
+    last_location_city: 'São Paulo',
+    last_location_state: 'SP',
+    last_location_neighborhood: 'Bela Vista',
+    last_location_postal_code: '01310-100',
+  },
+};
+
 export const CITIZEN_DEMO_USER = {
   id: 'cidadao-demo-01',
   email: 'demo@zeldoria.com',
@@ -163,11 +216,67 @@ export const AuthProvider = ({children}) => {
     }
   };
 
+  const loginWithCredentials = async (identifier, password) => {
+    const cleanId = (identifier || '').trim().toLowerCase();
+    
+    // Check investor 1
+    if ((cleanId === 'user1' || cleanId === 'user1@zeladoria.com' || cleanId === 'investor1@zeladoria.com') && password === INVESTOR_USERS.user1.password) {
+      window.localStorage.setItem(ROLE_OVERRIDE_KEY, 'super_admin');
+      persistUser(INVESTOR_USERS.user1);
+      setAuthError(null);
+      return INVESTOR_USERS.user1;
+    }
+    
+    // Check investor 2
+    if ((cleanId === 'user2' || cleanId === 'user2@zeladoria.com' || cleanId === 'investor2@zeladoria.com') && password === INVESTOR_USERS.user2.password) {
+      window.localStorage.setItem(ROLE_OVERRIDE_KEY, 'super_admin');
+      persistUser(INVESTOR_USERS.user2);
+      setAuthError(null);
+      return INVESTOR_USERS.user2;
+    }
+
+    // Check citizen demo user
+    if (cleanId === 'demo@zeldoria.com' && password === 'zeldoria123') {
+      window.localStorage.setItem(ROLE_OVERRIDE_KEY, 'cidadao');
+      persistUser(CITIZEN_DEMO_USER);
+      setAuthError(null);
+      return CITIZEN_DEMO_USER;
+    }
+
+    // Check superadmin demo user
+    if (cleanId === 'superadmin@zeldoria.gov.br' && password === 'zeldoria123') {
+      window.localStorage.setItem(ROLE_OVERRIDE_KEY, 'super_admin');
+      persistUser(SUPER_ADMIN_USER);
+      setAuthError(null);
+      return SUPER_ADMIN_USER;
+    }
+
+    // Try backend API provider if configured
+    try {
+      const session = await appApi.auth.loginViaEmailPassword(identifier, password);
+      if (session?.user) {
+        persistUser(session.user);
+        return session.user;
+      }
+      return session;
+    } catch (err) {
+      throw new Error(err.message || 'Credenciais inválidas. Verifique seu login e senha.');
+    }
+  };
+
   const loginAsSuperAdmin = () => {
     window.localStorage.setItem(ROLE_OVERRIDE_KEY, 'super_admin');
     persistUser(SUPER_ADMIN_USER);
     setAuthError(null);
     return SUPER_ADMIN_USER;
+  };
+
+  const loginAsInvestor = (investorKey = 'user1') => {
+    const investor = INVESTOR_USERS[investorKey] || INVESTOR_USERS.user1;
+    window.localStorage.setItem(ROLE_OVERRIDE_KEY, 'super_admin');
+    persistUser(investor);
+    setAuthError(null);
+    return investor;
   };
 
   const loginAsCitizen = () => {
@@ -236,7 +345,9 @@ export const AuthProvider = ({children}) => {
       navigateToLogin,
       checkUserAuth,
       checkAppState,
+      loginWithCredentials,
       loginAsSuperAdmin,
+      loginAsInvestor,
       loginAsCitizen,
       switchRole,
       updateUserData,
@@ -254,3 +365,4 @@ export const useAuth = () => {
   }
   return context;
 };
+

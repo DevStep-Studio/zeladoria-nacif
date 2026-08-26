@@ -1,22 +1,19 @@
 import React, {useEffect, useState} from 'react';
 import {Link, useNavigate} from 'react-router-dom';
-import {appApi} from '@/services/app-api';
-import {useAuth} from '@/lib/AuthContext';
+import {useAuth, INVESTOR_USERS} from '@/lib/AuthContext';
 import {Button} from '@/components/ui/button';
 import {Input} from '@/components/ui/input';
 import {Label} from '@/components/ui/label';
 import {Checkbox} from '@/components/ui/checkbox';
 import ZeladoriaLogo from '@/components/shared/ZeladoriaLogo';
-import {ArrowRight, Eye, EyeOff, Loader2, Lock, Mail, ShieldCheck, UserRoundCheck, ShieldAlert} from 'lucide-react';
+import {ArrowRight, Eye, EyeOff, Loader2, Lock, User, ShieldCheck, UserRoundCheck, ShieldAlert, KeyRound, Sparkles} from 'lucide-react';
 
-const DEMO_EMAIL = 'demo@zeldoria.com';
-const DEMO_PASSWORD = 'zeldoria123';
 const REMEMBERED_EMAIL_KEY = 'zeladoria:remembered-email';
 
 export default function Login() {
- const {loginAsSuperAdmin, loginAsCitizen} = useAuth();
+ const {loginWithCredentials, loginAsSuperAdmin, loginAsCitizen, loginAsInvestor} = useAuth();
  const navigate = useNavigate();
- const [email, setEmail] = useState('');
+ const [identifier, setIdentifier] = useState('');
  const [password, setPassword] = useState('');
  const [rememberMe, setRememberMe] = useState(true);
  const [showPassword, setShowPassword] = useState(false);
@@ -25,7 +22,7 @@ export default function Login() {
 
  useEffect(() => {
   const rememberedEmail = window.localStorage.getItem(REMEMBERED_EMAIL_KEY);
-  if (rememberedEmail) setEmail(rememberedEmail);
+  if (rememberedEmail) setIdentifier(rememberedEmail);
  }, []);
 
  const handleSubmit = async (e) => {
@@ -34,15 +31,20 @@ export default function Login() {
   setLoading(true);
 
   try {
-   await appApi.auth.loginViaEmailPassword(email, password);
+   const user = await loginWithCredentials(identifier, password);
    if (rememberMe) {
-    window.localStorage.setItem(REMEMBERED_EMAIL_KEY, email);
+    window.localStorage.setItem(REMEMBERED_EMAIL_KEY, identifier);
    } else {
     window.localStorage.removeItem(REMEMBERED_EMAIL_KEY);
    }
-   window.location.href = '/';
+   
+   if (user?.role === 'super_admin' || user?.role === 'admin') {
+    navigate('/admin');
+   } else {
+    navigate('/');
+   }
   } catch (err) {
-   setError(err.message || 'E-mail ou senha inválidos');
+   setError(err.message || 'E-mail, usuário ou senha inválidos.');
   } finally {
    setLoading(false);
   }
@@ -58,11 +60,15 @@ export default function Login() {
   navigate('/');
  };
 
- const fillDemoCredentials = () => {
-  setEmail(DEMO_EMAIL);
-  setPassword(DEMO_PASSWORD);
+ const fillInvestorCredentials = (investorKey) => {
+  const inv = INVESTOR_USERS[investorKey];
+  if (!inv) return;
+  setIdentifier(inv.email);
+  setPassword(inv.password);
   setError('');
  };
+
+
 
  return (
   <div className="min-h-screen bg-white text-slate-950 lg:grid lg:grid-cols-[minmax(0,45%)_minmax(0,55%)]">
@@ -117,18 +123,18 @@ export default function Login() {
 
       <form onSubmit={handleSubmit} className="space-y-4">
        <div className="space-y-2">
-        <Label htmlFor="email" className="text-[12px] font-bold text-slate-900">
-         E-mail *
+        <Label htmlFor="identifier" className="text-[12px] font-bold text-slate-900">
+         E-mail ou Usuário *
         </Label>
         <div className="relative">
-         <Mail className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" aria-hidden="true" />
+         <User className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" aria-hidden="true" />
          <Input
-          id="email"
-          type="email"
-          autoComplete="email"
-          placeholder="seu@email.com"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
+          id="identifier"
+          type="text"
+          autoComplete="username"
+          placeholder="ex: user1 ou seu@email.com"
+          value={identifier}
+          onChange={(e) => setIdentifier(e.target.value)}
           className="h-10 rounded-xl border-slate-200 bg-white pl-10 pr-3 text-[13px] shadow-none placeholder:text-slate-400 focus-visible:ring-primary/30"
           required
          />
@@ -189,7 +195,7 @@ export default function Login() {
          </>
         ) : (
          <>
-          Entrar com e-mail
+          Acessar Sistema
           <ArrowRight className="h-4 w-4" />
          </>
         )}
@@ -205,18 +211,31 @@ export default function Login() {
 
       <div className="my-3 flex items-center gap-3 text-[11px] font-medium text-slate-300">
        <div className="h-px flex-1 bg-slate-100" />
-       <span>ou</span>
+       <span>ou preenchimento rápido para investidores</span>
        <div className="h-px flex-1 bg-slate-100" />
       </div>
 
-      <Button
-       type="button"
-       variant="outline"
-       onClick={fillDemoCredentials}
-       className="h-9 w-full rounded-xl border-slate-200 bg-white text-[12px] font-medium text-slate-500 shadow-sm hover:bg-slate-50 hover:text-primary"
-      >
-       Preencher campos com conta demo
-      </Button>
+      <div className="grid grid-cols-2 gap-2">
+       <Button
+        type="button"
+        variant="outline"
+        onClick={() => fillInvestorCredentials('user1')}
+        className="h-9 w-full rounded-xl border-slate-200 bg-slate-50 text-[11px] font-bold text-slate-700 shadow-none hover:bg-slate-100 hover:text-primary gap-1 truncate"
+       >
+        <KeyRound className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
+        user1@zeladoria.com
+       </Button>
+       <Button
+        type="button"
+        variant="outline"
+        onClick={() => fillInvestorCredentials('user2')}
+        className="h-9 w-full rounded-xl border-slate-200 bg-slate-50 text-[11px] font-bold text-slate-700 shadow-none hover:bg-slate-100 hover:text-primary gap-1 truncate"
+       >
+        <KeyRound className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
+        user2@zeladoria.com
+       </Button>
+      </div>
+
      </div>
     </div>
 

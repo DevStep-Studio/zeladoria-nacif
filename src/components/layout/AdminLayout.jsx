@@ -164,6 +164,12 @@ export default function AdminLayout() {
  <span className="text-muted-foreground/60 font-normal block text-xs">{currentItem?.group ? GROUP_LABELS[currentItem.group] : 'Zeladoria Cidades'}</span>
  {currentItem?.label || 'Admin'}
  </h1>
+ {user?.is_investor && (
+   <span className="hidden sm:inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-amber-50 border border-amber-200 text-amber-800 text-[11px] font-bold">
+     <span className="w-1.5 h-1.5 rounded-full bg-amber-500 animate-ping" />
+     {user.investor_badge || 'Investidor • Sessão Confidencial'}
+   </span>
+ )}
  </div>
  <div className="flex items-center gap-4">
  <div className="hidden md:flex items-center bg-slate-100 rounded-full px-4 py-2 w-64 border border-transparent focus-within:border-primary/30 focus-within:bg-white transition-colors">
