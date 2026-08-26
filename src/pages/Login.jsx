@@ -1,17 +1,17 @@
 import React, {useEffect, useState} from 'react';
 import {Link, useNavigate} from 'react-router-dom';
-import {useAuth, INVESTOR_USERS} from '@/lib/AuthContext';
+import {useAuth} from '@/lib/AuthContext';
 import {Button} from '@/components/ui/button';
 import {Input} from '@/components/ui/input';
 import {Label} from '@/components/ui/label';
 import {Checkbox} from '@/components/ui/checkbox';
 import ZeladoriaLogo from '@/components/shared/ZeladoriaLogo';
-import {ArrowRight, Eye, EyeOff, Loader2, Lock, User, ShieldCheck, UserRoundCheck, ShieldAlert, KeyRound, Sparkles} from 'lucide-react';
+import {ArrowRight, Eye, EyeOff, Loader2, Lock, User, ShieldCheck, UserRoundCheck, ShieldAlert} from 'lucide-react';
 
 const REMEMBERED_EMAIL_KEY = 'zeladoria:remembered-email';
 
 export default function Login() {
- const {loginWithCredentials, loginAsSuperAdmin, loginAsCitizen, loginAsInvestor} = useAuth();
+ const {loginWithCredentials, loginAsSuperAdmin, loginAsCitizen} = useAuth();
  const navigate = useNavigate();
  const [identifier, setIdentifier] = useState('');
  const [password, setPassword] = useState('');
@@ -60,17 +60,8 @@ export default function Login() {
   navigate('/');
  };
 
- const fillInvestorCredentials = (investorKey) => {
-  const inv = INVESTOR_USERS[investorKey];
-  if (!inv) return;
-  setIdentifier(inv.email);
-  setPassword(inv.password);
-  setError('');
- };
-
-
-
  return (
+
   <div className="min-h-screen bg-white text-slate-950 lg:grid lg:grid-cols-[minmax(0,45%)_minmax(0,55%)]">
    <section className="relative flex min-h-screen flex-col px-6 py-8 sm:px-10 lg:px-12 xl:px-14">
     <div className="shrink-0">
@@ -208,36 +199,9 @@ export default function Login() {
         Criar conta grátis
        </Link>
       </p>
-
-      <div className="my-3 flex items-center gap-3 text-[11px] font-medium text-slate-300">
-       <div className="h-px flex-1 bg-slate-100" />
-       <span>ou preenchimento rápido para investidores</span>
-       <div className="h-px flex-1 bg-slate-100" />
-      </div>
-
-      <div className="grid grid-cols-2 gap-2">
-       <Button
-        type="button"
-        variant="outline"
-        onClick={() => fillInvestorCredentials('user1')}
-        className="h-9 w-full rounded-xl border-slate-200 bg-slate-50 text-[11px] font-bold text-slate-700 shadow-none hover:bg-slate-100 hover:text-primary gap-1 truncate"
-       >
-        <KeyRound className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
-        user1@zeladoria.com
-       </Button>
-       <Button
-        type="button"
-        variant="outline"
-        onClick={() => fillInvestorCredentials('user2')}
-        className="h-9 w-full rounded-xl border-slate-200 bg-slate-50 text-[11px] font-bold text-slate-700 shadow-none hover:bg-slate-100 hover:text-primary gap-1 truncate"
-       >
-        <KeyRound className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
-        user2@zeladoria.com
-       </Button>
-      </div>
-
      </div>
     </div>
+
 
     <footer className="flex shrink-0 items-center justify-between gap-4 text-[11px] text-slate-300">
      <span>© 2026 Zeladoria Cidades</span>
