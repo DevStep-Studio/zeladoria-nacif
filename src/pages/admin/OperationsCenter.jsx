@@ -11,6 +11,7 @@ import {motion, AnimatePresence} from 'framer-motion';
 
 export default function OperationsCenter() {
  const [now, setNow] = useState(new Date());
+ const [selectedMapCenter, setSelectedMapCenter] = useState(null);
 
  useEffect(() => {
  const timer = setInterval(() => setNow(new Date()), 30000);
@@ -108,7 +109,7 @@ export default function OperationsCenter() {
  </CardTitle>
  </CardHeader>
  <CardContent>
- <OccurrenceMap occurrences={active} height="400px" zoom={12} />
+ <OccurrenceMap occurrences={active} center={selectedMapCenter} height="400px" zoom={12} />
  </CardContent>
  </Card>
 
@@ -135,7 +136,12 @@ export default function OperationsCenter() {
  key={occ.id}
  initial={{opacity: 0, x: 20}}
  animate={{opacity: 1, x: 0}}
- className="p-3 rounded-lg border border-red-200 bg-red-50">
+ onClick={() => {
+ if (occ.latitude && occ.longitude) {
+ setSelectedMapCenter([occ.latitude, occ.longitude]);
+ }
+ }}
+ className="p-3 rounded-lg border border-red-200 bg-red-50 hover:bg-red-100/75 transition-colors cursor-pointer">
  <div className="flex items-start justify-between gap-2">
  <div className="flex-1 min-w-0">
  <p className="text-xs font-semibold text-red-800 truncate">

@@ -106,55 +106,85 @@ function locationFromNominatim(data, fallback = {}) {
  };
 }
 
+const geocodeCache = new Map();
+
 export async function reverseGeocode(latitude, longitude, options = {}) {
- if (!isValidCoordinate(latitude, longitude)) {
-  throw new Error('Coordenadas inválidas.');
- }
+  if (!isValidCoordinate(latitude, longitude)) {
+    throw new Error('Coordenadas inválidas.');
+  }
 
- const params = new URLSearchParams({
-  format: 'jsonv2',
-  lat: String(latitude),
-  lon: String(longitude),
-  zoom: '18',
-  addressdetails: '1',
-  'accept-language': 'pt-BR',
- });
+  const cacheKey = `rev_${Number(latitude).toFixed(5)}_${Number(longitude).toFixed(5)}`;
+  if (geocodeCache.has(cacheKey)) {
+    const cached = geocodeCache.get(cacheKey);
+    return {
+      ...cached,
+      accuracy: options.accuracy ?? cached.accuracy,
+      source: options.source || cached.source,
+      lowAccuracy: options.lowAccuracy ?? cached.lowAccuracy,
+    };
+  }
 
- const data = await fetchJsonWithTimeout(`https://nominatim.openstreetmap.org/reverse?${params.toString()}`);
- return locationFromNominatim(data, {
-  latitude,
-  longitude,
-  accuracy: options.accuracy,
-  source: options.source || 'device',
-  lowAccuracy: options.lowAccuracy,
- });
+  const params = new URLSearchParams({
+    format: 'jsonv2',
+    lat: String(latitude),
+    lon: String(longitude),
+    zoom: '18',
+    addressdetails: '1',
+    'accept-language': 'pt-BR',
+    email: 'zeladoria@cidades.gov.br',
+  });
+
+  const data = await fetchJsonWithTimeout(`https://nominatim.openstreetmap.org/reverse?${params.toString()}`);
+  const result = locationFromNominatim(data, {
+    latitude,
+    longitude,
+    accuracy: options.accuracy,
+    source: options.source || 'device',
+    lowAccuracy: options.lowAccuracy,
+  });
+
+  geocodeCache.set(cacheKey, result);
+  return result;
 }
 
 export async function geocodeAddress(query, fallback = {}) {
- const cleanedQuery = compact(query);
- if (!cleanedQuery) throw new Error('Informe cidade e estado para localizar a região.');
+  const cleanedQuery = compact(query);
+  if (!cleanedQuery) throw new Error('Informe cidade e estado para localizar a região.');
 
- const params = new URLSearchParams({
-  format: 'jsonv2',
-  q: cleanedQuery,
-  limit: '1',
-  countrycodes: 'br',
-  addressdetails: '1',
-  'accept-language': 'pt-BR',
- });
+  const cacheKey = `geo_${cleanedQuery.toLowerCase()}`;
+  if (geocodeCache.has(cacheKey)) {
+    return {
+      ...fallback,
+      ...geocodeCache.get(cacheKey),
+      source: fallback.source || 'manual',
+    };
+  }
 
- const data = await fetchJsonWithTimeout(`https://nominatim.openstreetmap.org/search?${params.toString()}`);
- const first = Array.isArray(data) ? data[0] : null;
- if (!first || !isValidCoordinate(first.lat, first.lon)) {
-  throw new Error('Não foi possível localizar a cidade informada.');
- }
+  const params = new URLSearchParams({
+    format: 'jsonv2',
+    q: cleanedQuery,
+    limit: '1',
+    countrycodes: 'br',
+    addressdetails: '1',
+    'accept-language': 'pt-BR',
+    email: 'zeladoria@cidades.gov.br',
+  });
 
- return locationFromNominatim(first, {
-  ...fallback,
-  latitude: Number(first.lat),
-  longitude: Number(first.lon),
-  source: fallback.source || 'manual',
- });
+  const data = await fetchJsonWithTimeout(`https://nominatim.openstreetmap.org/search?${params.toString()}`);
+  const first = Array.isArray(data) ? data[0] : null;
+  if (!first || !isValidCoordinate(first.lat, first.lon)) {
+    throw new Error('Não foi possível localizar a cidade informada.');
+  }
+
+  const result = locationFromNominatim(first, {
+    ...fallback,
+    latitude: Number(first.lat),
+    longitude: Number(first.lon),
+    source: fallback.source || 'manual',
+  });
+
+  geocodeCache.set(cacheKey, result);
+  return result;
 }
 
 export async function fetchAddressByCep(value) {

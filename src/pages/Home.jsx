@@ -169,6 +169,12 @@ export default function Home() {
             height="100%"
             zoom={MUNICIPALITY_CONFIG.defaultZoom}
             privacyMode
+            homeMarker={userHomeLoc ? {
+              latitude: userHomeLoc.latitude,
+              longitude: userHomeLoc.longitude,
+              label: registeredAddressLabel,
+              neighborhood: userHomeLoc.neighborhood,
+            } : null}
           />
         </div>
       </div>
